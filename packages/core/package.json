@@ -1,0 +1,35 @@
+{
+  "name": "@repere/core",
+  "version": "0.0.0",
+  "private": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./css": {
+      "default": "./dist/css/variables.css"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "yalc:publish": "vite build && yalc publish"
+  },
+  "keywords": [
+    "tour",
+    "onboarding",
+    "beacon",
+    "popover",
+    "guide",
+    "tutorial"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
