@@ -75,7 +75,6 @@ export function BeaconRenderer({
   // Actions - browser handles toggle/open/close via Popover API
   const handleDismiss = async () => {
     await Promise.resolve(store.dismiss(beacon.id));
-    popoverRef.current?.hidePopover(); // Fallback close
     onDismiss();
   };
 
@@ -84,10 +83,6 @@ export function BeaconRenderer({
     beaconId: beacon.id,
     position,
     calculatedPosition,
-    isOpen: false, // Not used with Popover API, kept for compatibility
-    toggle: () => popoverRef.current?.togglePopover(),
-    open: () => popoverRef.current?.showPopover(),
-    close: () => popoverRef.current?.hidePopover(),
     dismiss: handleDismiss,
     triggerAnimation: triggerAnimationConfig,
     popoverAnimation: popoverAnimationConfig,

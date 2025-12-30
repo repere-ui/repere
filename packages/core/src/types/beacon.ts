@@ -24,7 +24,10 @@ export interface Beacon<TNode = unknown> {
 export interface CalculatedBeaconPosition {
   top: number;
   left: number;
-  transform: string;
+  translate: {
+    x: string;
+    y: string;
+  };
   position: "fixed";
   zIndex: number;
 }

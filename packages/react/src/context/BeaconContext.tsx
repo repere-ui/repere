@@ -9,13 +9,6 @@ export interface BeaconContextValue {
   position: Position;
   calculatedPosition: CalculatedBeaconPosition | null;
 
-  // UI state
-  isOpen: boolean;
-
-  // Actions
-  toggle: () => void;
-  open: () => void;
-  close: () => void;
   dismiss: () => void;
 
   // Animation configs (resolved from core)

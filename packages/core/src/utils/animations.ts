@@ -1,11 +1,11 @@
-import type { AnimationVariant, AnimationConfig } from "../types/animations";
 import { ANIMATION_VARIANTS } from "../constants/animations";
+import type { AnimationConfig, AnimationVariant } from "../types/animations";
 
 /**
  * Normalize animation input to full config
  */
 export function normalizeAnimationConfig(
-  input?: AnimationVariant | AnimationConfig,
+  input?: AnimationVariant | AnimationConfig | null,
 ): AnimationConfig | null {
   if (!input) return null;
 
@@ -72,6 +72,62 @@ export function getAnimationConfig(
       duration: (config.duration || 300) / 1000, // Convert ms to seconds
       delay: (config.delay || 0) / 1000,
       ease: config.ease || [0.4, 0, 0.2, 1], // cubic-bezier
+    },
+  };
+}
+
+/**
+ * Combine positioning translate with animation variants
+ * This merges the static positioning offset (e.g., "-50%, 0") with
+ * animation offsets (e.g., y: -20px for slide-down)
+ */
+export function combineTranslateWithAnimation(
+  translate: { x: string; y: string },
+  animationVariants: {
+    initial: Record<string, number | string>;
+    animate: Record<string, number | string>;
+    exit: Record<string, number | string>;
+  },
+): {
+  initial: Record<string, number | string>;
+  animate: Record<string, number | string>;
+  exit: Record<string, number | string>;
+} {
+  // Parse percentage from translate (e.g., "-50%" -> -50)
+  const parsePercent = (val: string) => {
+    const match = val.match(/(-?\d+)%/);
+    return match ? parseFloat(match[1]) : 0;
+  };
+
+  const translateXPercent = parsePercent(translate.x);
+  const translateYPercent = parsePercent(translate.y);
+
+  // Helper to create transform string
+  const createTransform = (yOffset: number = 0) => {
+    if (translateYPercent === 0 && yOffset === 0) {
+      // Simple case: only x offset
+      return `translate(${translateXPercent}%, 0)`;
+    } else if (yOffset === 0) {
+      // Only percentage offset
+      return `translate(${translateXPercent}%, ${translateYPercent}%)`;
+    } else {
+      // Need calc for combined percentage + pixel offset
+      return `translate(${translateXPercent}%, calc(${translateYPercent}% + ${yOffset}px))`;
+    }
+  };
+
+  return {
+    initial: {
+      ...animationVariants.initial,
+      transform: createTransform((animationVariants.initial.y as number) || 0),
+    },
+    animate: {
+      ...animationVariants.animate,
+      transform: createTransform((animationVariants.animate.y as number) || 0),
+    },
+    exit: {
+      ...animationVariants.exit,
+      transform: createTransform((animationVariants.exit.y as number) || 0),
     },
   };
 }

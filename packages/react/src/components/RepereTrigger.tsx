@@ -1,8 +1,8 @@
+import { combineTranslateWithAnimation } from "@repere/core";
 import { motion } from "motion/react";
 import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from "react";
 import { useBeaconContext } from "../context/BeaconContext";
 
-// Root trigger button - completely unstyled
 interface RepereTriggerProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   | "style"
@@ -33,9 +33,10 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
       position: calculatedPosition.position,
       top: calculatedPosition.top,
       left: calculatedPosition.left,
-      transform: calculatedPosition.transform,
       zIndex: calculatedPosition.zIndex,
       pointerEvents: "auto" as const,
+      anchorName: `--repere-trigger-${beaconId}`,
+      cursor: "pointer",
     };
 
     const style = userStyle
@@ -45,6 +46,11 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
     const shouldAnimate = !disableAnimation && triggerAnimation;
 
     if (shouldAnimate) {
+      const combinedVariants = combineTranslateWithAnimation(
+        calculatedPosition.translate,
+        triggerAnimation.variants,
+      );
+
       return (
         <motion.button
           ref={ref}
@@ -53,7 +59,7 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
           data-repere-trigger=""
           initial="initial"
           animate="animate"
-          variants={triggerAnimation.variants}
+          variants={combinedVariants}
           transition={triggerAnimation.transition}
           {...props}
           style={style as any}
@@ -70,7 +76,12 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
         aria-label={`Beacon trigger for ${beaconId}`}
         data-repere-trigger=""
         {...props}
-        style={style as React.CSSProperties}
+        style={
+          {
+            ...style,
+            translate: `${calculatedPosition.translate.x} ${calculatedPosition.translate.y}`,
+          } as React.CSSProperties
+        }
       >
         {children}
       </button>

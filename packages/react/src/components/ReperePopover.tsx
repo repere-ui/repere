@@ -29,7 +29,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
     ) as React.MutableRefObject<HTMLDivElement | null>;
     const [isOpen, setIsOpen] = useState(false);
 
-    const { calculatedPosition, beaconId, popoverAnimation } = context || {};
+    const { beaconId, popoverAnimation } = context || {};
 
     // Combine refs
     const setRefs = useCallback(
@@ -50,7 +50,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       if (!element) return;
 
       const handleToggle = (e: Event) => {
-        const toggleEvent = e as any; // ToggleEvent type might not be available
+        const toggleEvent = e as any;
         setIsOpen(toggleEvent.newState === "open");
       };
 
@@ -58,21 +58,15 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       return () => element.removeEventListener("toggle", handleToggle);
     }, []);
 
-    if (context && !calculatedPosition) return null;
+    // Set unique position-anchor for this popover
+    const positionAnchor = beaconId
+      ? `--repere-trigger-${beaconId}`
+      : undefined;
 
-    const positionStyle = calculatedPosition
-      ? {
-          position: "fixed" as const,
-          top: calculatedPosition.top,
-          left: calculatedPosition.left,
-          zIndex: calculatedPosition.zIndex + 1,
-          pointerEvents: "auto" as const,
-        }
-      : {};
-
-    const style = userStyle
-      ? { ...positionStyle, ...userStyle }
-      : positionStyle;
+    const style = {
+      positionAnchor,
+      ...userStyle,
+    };
 
     const shouldAnimate = !disableAnimation && popoverAnimation;
 

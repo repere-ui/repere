@@ -1,11 +1,9 @@
-// packages/react/src/hooks/useBeaconPosition.ts
-
 import type {
   BeaconOffset,
   CalculatedBeaconPosition,
   Position,
 } from "@repere/core";
-import { calculateBeaconPosition } from "@repere/core"; // ✅ Import from core
+import { calculateBeaconPosition } from "@repere/core";
 import { useEffect, useRef, useState } from "react";
 
 interface UseBeaconPositionParams {
@@ -106,7 +104,7 @@ export function useBeaconPosition({
       resizeObserver?.disconnect();
       mutationObserver.disconnect();
     };
-  }, [targetSelector, position, offset, zIndex, enabled]);
+  }, [targetSelector]);
 
   return { calculatedPosition, targetElement: targetElementRef.current };
 }

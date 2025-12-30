@@ -1,15 +1,12 @@
-import type { Animation } from "../types";
+import type { AnimationVariant } from "../types";
 
-/**
- * Animation variant definitions for motion library
- */
-export type AnimationVariant = {
+export type AnimationProps = {
   initial: Record<string, number | string>;
   animate: Record<string, number | string>;
   exit: Record<string, number | string>;
 };
 
-export const ANIMATION_VARIANTS: Record<Animation, AnimationVariant> = {
+export const ANIMATION_VARIANTS: Record<AnimationVariant, AnimationProps> = {
   "slide-down": {
     initial: { y: -20, opacity: 0 },
     animate: { y: 0, opacity: 1 },
@@ -66,14 +63,14 @@ export const ANIMATION_VARIANTS: Record<Animation, AnimationVariant> = {
  * Get animation config with defaults
  */
 export function getAnimationConfig(
-  animation: Animation = "fade-in",
+  animation: AnimationVariant = "fade-in",
   customConfig?: {
     duration?: number;
     delay?: number;
     ease?: string;
   },
 ): {
-  variants: AnimationVariant;
+  variants: AnimationProps;
   transition: any;
 } {
   const variant = ANIMATION_VARIANTS[animation];

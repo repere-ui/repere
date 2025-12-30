@@ -9,13 +9,9 @@ export class MemoryStore implements BeaconStore {
   }
 
   dismiss(beaconId: string): void {
-    const existing = this.state.get(beaconId);
     this.state.set(beaconId, {
       id: beaconId,
       isDismissed: true,
-      dismissedAt: Date.now(),
-      viewCount: (existing?.viewCount ?? 0) + 1,
-      lastViewedAt: Date.now(),
     });
   }
 
@@ -29,17 +25,5 @@ export class MemoryStore implements BeaconStore {
 
   getAll(): BeaconState[] {
     return Array.from(this.state.values());
-  }
-
-  // Helper for tracking views without dismissing
-  incrementViewCount(beaconId: string): void {
-    const existing = this.state.get(beaconId);
-    this.state.set(beaconId, {
-      ...existing,
-      id: beaconId,
-      isDismissed: existing?.isDismissed ?? false,
-      viewCount: (existing?.viewCount ?? 0) + 1,
-      lastViewedAt: Date.now(),
-    });
   }
 }

@@ -4,6 +4,77 @@ import { createPortal } from "react-dom";
 import type { RepereReactConfig } from "../types";
 import { BeaconRenderer } from "./BeaconRenderer";
 
+// Inject CSS anchor positioning styles once globally
+let anchorStylesInjected = false;
+function injectAnchorStyles() {
+  if (anchorStylesInjected || typeof document === "undefined") return;
+
+  const styleId = "repere-anchor-styles";
+  if (document.getElementById(styleId)) {
+    anchorStylesInjected = true;
+    return;
+  }
+
+  const style = document.createElement("style");
+  style.id = styleId;
+  style.textContent = `
+      /* Anchor positioning for Repere popovers */
+      /* Note: anchor-name is set inline per trigger via style.anchorName */
+      [data-repere-popover]:popover-open {
+        position: absolute;
+        /* position-anchor is set inline per popover */
+        inset: unset;
+        margin: 0;
+
+        /* Default: bottom-center */
+        top: anchor(bottom);
+        left: anchor(center);
+        translate: -50% 0;
+
+        /* Position try fallbacks for viewport overflow */
+        position-try-options: --bottom-left, --bottom-right, --top-center, --top-left, --top-right;
+      }
+
+      @position-try --bottom-left {
+        inset: unset;
+        top: anchor(bottom);
+        left: anchor(left);
+        translate: 0 0;
+      }
+
+      @position-try --bottom-right {
+        inset: unset;
+        top: anchor(bottom);
+        right: anchor(right);
+        translate: 0 0;
+      }
+
+      @position-try --top-center {
+        inset: unset;
+        bottom: anchor(top);
+        left: anchor(center);
+        translate: -50% 0;
+      }
+
+      @position-try --top-left {
+        inset: unset;
+        bottom: anchor(top);
+        left: anchor(left);
+        translate: 0 0;
+      }
+
+      @position-try --top-right {
+        inset: unset;
+        bottom: anchor(top);
+        right: anchor(right);
+        translate: 0 0;
+      }
+    `;
+
+  document.head.appendChild(style);
+  anchorStylesInjected = true;
+}
+
 export interface BeaconsProps {
   config: RepereReactConfig;
   /**
@@ -47,6 +118,10 @@ export function Beacons({
   const [dismissedBeacons, setDismissedBeacons] = useState<Set<string>>(
     new Set(),
   );
+
+  useEffect(() => {
+    injectAnchorStyles();
+  }, []);
 
   // Load dismissed state when page changes
   useEffect(() => {

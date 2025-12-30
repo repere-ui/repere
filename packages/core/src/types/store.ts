@@ -1,9 +1,6 @@
 export interface BeaconState {
   id: string;
   isDismissed: boolean;
-  dismissedAt?: number;
-  viewCount?: number;
-  lastViewedAt?: number;
 }
 
 export interface BeaconStore {

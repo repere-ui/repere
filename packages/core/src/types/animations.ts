@@ -8,9 +8,6 @@ export type AnimationVariant =
   | "slide-down"
   | "slide-left"
   | "slide-right"
-  | "bounce"
-  | "pulse"
-  | "shake"
   | "none";
 
 export interface AnimationConfig {

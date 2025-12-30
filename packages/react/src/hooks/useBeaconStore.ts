@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
 import type { BeaconStore } from "@repere/core";
+import { useCallback, useEffect, useState } from "react";
 
 export function useBeaconStore(store: BeaconStore, beaconId: string) {
   const [isDismissed, setIsDismissed] = useState<boolean>(false);

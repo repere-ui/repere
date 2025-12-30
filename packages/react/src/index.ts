@@ -17,8 +17,6 @@ export {
 // Hooks
 export { useBeaconPosition } from "./hooks/useBeaconPosition";
 export { useBeaconStore } from "./hooks/useBeaconStore";
-export { usePopover } from "./hooks/usePopover";
-export { useTrigger } from "./hooks/useTrigger";
 // Re-export React types
 export type {
   PopoverComponent,
