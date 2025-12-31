@@ -26,7 +26,7 @@ export interface Beacon<TNode = unknown> {
   selector: string;
 
   trigger?: TriggerConfig<TNode>;
-  popover: PopoverConfig<TNode>; // Required - you need a popover!
+  popover: PopoverConfig<TNode>;
 }
 
 export interface CalculatedBeaconPosition {

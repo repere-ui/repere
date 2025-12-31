@@ -1,16 +1,15 @@
 // Animation utilities
-export { ANIMATION_VARIANTS, getPulseConfig } from "./constants/animations";
+export { ANIMATION_VARIANTS } from "./constants/animations";
 // Constants
 export { DEFAULT_POSITION, DEFAULT_Z_INDEX } from "./constants/beacon";
 // Store
 export { MemoryStore } from "./store/memory-store";
-export type {
-  AnimationConfig,
-  AnimationVariant,
-  BeaconAnimations,
-  DefaultAnimations,
-  PopoverAnimations,
-  TriggerAnimations,
+export {
+  Animation,
+  type AnimationConfig,
+  type PopoverAnimations,
+  type ResolvedAnimationConfig,
+  type TriggerAnimations,
 } from "./types/animations";
 export type {
   Beacon,
@@ -21,11 +20,12 @@ export type {
 } from "./types/beacon";
 export type { ErrorHandling, Page, RepereConfig } from "./types/config";
 // Types
-export type { Position } from "./types/position";
+export { Position } from "./types/position";
 export type { BeaconState, BeaconStore } from "./types/store";
 export {
   combineTranslateWithAnimation,
   getAnimationConfig,
+  getPopoverAnimationStyles,
   mergeAnimationConfigs,
   normalizeAnimationConfig,
 } from "./utils/animations";
@@ -35,6 +35,5 @@ export { matchPath, normalizePath } from "./utils/path-matching";
 export {
   calculateBeaconPosition,
   type PositionCoordinates,
-  type PositionOffset,
 } from "./utils/positioning";
 import "./styles.css";

@@ -1,5 +1,5 @@
 import { combineTranslateWithAnimation } from "@repere/core";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from "react";
 import { useBeaconContext } from "../context/BeaconContext";
 
@@ -51,7 +51,7 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
       const combinedVariants = combineTranslateWithAnimation(
         calculatedPosition.translate,
         triggerAnimation.variants,
-      );
+      ) as unknown as Variants;
 
       return (
         <motion.button
@@ -62,7 +62,7 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
           initial="initial"
           animate="animate"
           variants={combinedVariants}
-          transition={triggerAnimation.transition}
+          transition={triggerAnimation.transition as any}
           {...props}
           style={style}
         >

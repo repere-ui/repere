@@ -1,11 +1,16 @@
 import { ANIMATION_VARIANTS } from "../constants/animations";
-import type { AnimationConfig, AnimationVariant } from "../types/animations";
+import type {
+  Animation,
+  AnimationConfig,
+  AnimationVariants,
+  ResolvedAnimationConfig,
+} from "../types/animations";
 
 /**
  * Normalize animation input to full config
  */
 export function normalizeAnimationConfig(
-  input?: AnimationVariant | AnimationConfig | null,
+  input?: Animation | AnimationConfig | null,
 ): AnimationConfig | null {
   if (!input) return null;
 
@@ -20,8 +25,8 @@ export function normalizeAnimationConfig(
  * Merge two animation configs, with override taking precedence
  */
 export function mergeAnimationConfigs(
-  base?: AnimationVariant | AnimationConfig,
-  override?: AnimationVariant | AnimationConfig,
+  base?: Animation | AnimationConfig,
+  override?: Animation | AnimationConfig,
 ): AnimationConfig | null {
   const baseConfig = normalizeAnimationConfig(base);
   const overrideConfig = normalizeAnimationConfig(override);
@@ -42,19 +47,8 @@ export function mergeAnimationConfigs(
  * Get animation config ready for motion library (Framer Motion, etc.)
  */
 export function getAnimationConfig(
-  input?: AnimationVariant | AnimationConfig | null,
-): {
-  variants: {
-    initial: Record<string, number | string>;
-    animate: Record<string, number | string>;
-    exit: Record<string, number | string>;
-  };
-  transition: {
-    duration: number;
-    delay: number;
-    ease: string | number[];
-  };
-} | null {
+  input?: Animation | AnimationConfig | null,
+): ResolvedAnimationConfig | null {
   const config = normalizeAnimationConfig(input);
 
   if (!config) return null;
@@ -83,16 +77,8 @@ export function getAnimationConfig(
  */
 export function combineTranslateWithAnimation(
   translate: { x: string; y: string },
-  animationVariants: {
-    initial: Record<string, number | string>;
-    animate: Record<string, number | string>;
-    exit: Record<string, number | string>;
-  },
-): {
-  initial: Record<string, number | string>;
-  animate: Record<string, number | string>;
-  exit: Record<string, number | string>;
-} {
+  animationVariants: AnimationVariants,
+): AnimationVariants {
   // Parse percentage from translate (e.g., "-50%" -> -50)
   const parsePercent = (val: string) => {
     const match = val.match(/(-?\d+)%/);
@@ -128,5 +114,48 @@ export function combineTranslateWithAnimation(
       ...animationVariants.exit,
       transform: createTransform((animationVariants.exit.y as number) || 0),
     },
+  };
+}
+
+/**
+ * Generate CSS custom properties for popover animations
+ * These are used with transition-behavior: allow-discrete in CSS
+ */
+export function getPopoverAnimationStyles(
+  openAnimation?: ResolvedAnimationConfig | null,
+  closeAnimation?: ResolvedAnimationConfig | null,
+): Record<string, string | number> {
+  if (!openAnimation && !closeAnimation) return {};
+
+  const openVariants = openAnimation?.variants;
+  const openTransition = openAnimation?.transition;
+  const closeVariants = closeAnimation?.variants;
+  const closeTransition = closeAnimation?.transition;
+
+  const ease = closeTransition?.ease ??
+    openTransition?.ease ?? [0.4, 0, 0.2, 1];
+  const timingFunction = Array.isArray(ease)
+    ? `cubic-bezier(${ease.join(", ")})`
+    : ease;
+
+  return {
+    // Initial state (when opening starts) - from onOpen animation
+    "--repere-initial-opacity": openVariants?.initial.opacity ?? 0,
+    "--repere-initial-x": `${openVariants?.initial.x ?? 0}px`,
+    "--repere-initial-y": `${openVariants?.initial.y ?? 0}px`,
+    "--repere-initial-scale": openVariants?.initial.scale ?? 1,
+    // Animate state (fully open) - from onOpen animation
+    "--repere-animate-opacity": openVariants?.animate.opacity ?? 1,
+    "--repere-animate-x": `${openVariants?.animate.x ?? 0}px`,
+    "--repere-animate-y": `${openVariants?.animate.y ?? 0}px`,
+    "--repere-animate-scale": openVariants?.animate.scale ?? 1,
+    // Exit state (when closing) - from onClose animation
+    "--repere-exit-opacity": closeVariants?.exit.opacity ?? 0,
+    "--repere-exit-x": `${closeVariants?.exit.x ?? 0}px`,
+    "--repere-exit-y": `${closeVariants?.exit.y ?? 0}px`,
+    "--repere-exit-scale": closeVariants?.exit.scale ?? 1,
+    // Transition timing
+    "--repere-transition-duration": `${closeTransition?.duration ?? openTransition?.duration ?? 0.3}s`,
+    "--repere-transition-timing": timingFunction,
   };
 }

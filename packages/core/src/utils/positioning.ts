@@ -1,9 +1,5 @@
+import type { Offset } from "../types/beacon";
 import { Position } from "../types/position";
-
-export interface PositionOffset {
-  x?: number;
-  y?: number;
-}
 
 export interface PositionCoordinates {
   top: number;
@@ -20,7 +16,7 @@ export interface PositionCoordinates {
 export function calculateBeaconPosition(
   targetRect: DOMRect,
   position: Position = Position.TopRight,
-  offset: PositionOffset = { x: 0, y: 0 },
+  offset: Offset = { x: 0, y: 0 },
 ): PositionCoordinates {
   const { x: offsetX = 0, y: offsetY = 0 } = offset;
   let top = 0;
