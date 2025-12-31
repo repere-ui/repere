@@ -205,30 +205,28 @@ export function BeaconRenderer({
 
   // Render popover with Popover API
   const renderPopover = () => {
-    if (isValidElement(popoverSource)) {
-      return cloneElement(popoverSource as ReactElement<any>, {
-        ref: handlePopoverRef,
-        id: popoverId,
-        popover: "auto",
-      });
-    }
+    let element: ReactElement;
 
-    const PopoverComponent = popoverSource as React.ComponentType<any>;
-    return (
-      <div
-        ref={handlePopoverRef}
-        id={popoverId}
-        popover="auto"
-        style={{ border: "none", background: "none", padding: 0 }}
-      >
+    if (isValidElement(popoverSource)) {
+      element = popoverSource;
+    } else {
+      const PopoverComponent = popoverSource as React.ComponentType<any>;
+      element = (
         <PopoverComponent
           beacon={beacon}
           position={position}
           onDismiss={handleDismiss}
           onClose={hidePopover}
         />
-      </div>
-    );
+      );
+    }
+
+    // Clone and add popover attributes (works for both cases)
+    return cloneElement(element, {
+      ref: handlePopoverRef,
+      id: popoverId,
+      popover: "auto",
+    });
   };
 
   return (

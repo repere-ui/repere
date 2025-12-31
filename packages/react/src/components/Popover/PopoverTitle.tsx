@@ -1,15 +1,31 @@
-import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type ElementType,
+  forwardRef,
+  type ReactNode,
+} from "react";
 import { useBeaconContext } from "../../context/BeaconContext";
 
-export interface PopoverTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+type PolymorphicRef<C extends ElementType> = ComponentPropsWithoutRef<C>["ref"];
+
+export interface PopoverTitleProps<T extends ElementType = "h3"> {
   children: ReactNode;
-  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  as?: T;
 }
 
-const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
-  ({ children, as: Component = "h3", ...props }, ref) => {
+type PopoverTitleComponent = <C extends ElementType = "h3">(
+  props: PopoverTitleProps<C> & { ref?: PolymorphicRef<C> },
+) => React.ReactElement | null;
+
+const PopoverTitleImpl = forwardRef(
+  <C extends ElementType = "h3">(
+    { children, as, ...props }: PopoverTitleProps<C>,
+    ref?: PolymorphicRef<C>,
+  ) => {
     const context = useBeaconContext();
     const beaconId = context?.beaconId || "unknown";
+
+    const Component = (as || "h3") as ElementType;
 
     return (
       <Component ref={ref} id={`repere-popover-${beaconId}`} {...props}>
@@ -17,8 +33,10 @@ const PopoverTitle = forwardRef<HTMLHeadingElement, PopoverTitleProps>(
       </Component>
     );
   },
-);
+) as PopoverTitleComponent;
 
-PopoverTitle.displayName = "ReperePopover.Title";
+const PopoverTitle = Object.assign(PopoverTitleImpl, {
+  displayName: "ReperePopover.Title",
+});
 
 export default PopoverTitle;
