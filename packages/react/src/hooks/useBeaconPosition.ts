@@ -1,15 +1,11 @@
-import type {
-  BeaconOffset,
-  CalculatedBeaconPosition,
-  Position,
-} from "@repere/core";
+import type { CalculatedBeaconPosition, Offset, Position } from "@repere/core";
 import { calculateBeaconPosition } from "@repere/core";
 import { useEffect, useRef, useState } from "react";
 
 interface UseBeaconPositionParams {
   targetSelector: string;
   position: Position;
-  offset?: BeaconOffset;
+  offset?: Offset;
   zIndex?: number;
   enabled?: boolean;
   debug?: boolean;

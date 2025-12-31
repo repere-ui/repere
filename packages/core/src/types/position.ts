@@ -1,9 +1,10 @@
-export type Position =
-  | "top-left"
-  | "top-center"
-  | "top-right"
-  | "right-center"
-  | "bottom-left"
-  | "bottom-center"
-  | "bottom-right"
-  | "left-center";
+export enum Position {
+  TopLeft = "top-left",
+  TopCenter = "top-center",
+  TopRight = "top-right",
+  RightCenter = "right-center",
+  BottomRight = "bottom-right",
+  BottomCenter = "bottom-center",
+  BottomLeft = "bottom-left",
+  LeftCenter = "left-center",
+}

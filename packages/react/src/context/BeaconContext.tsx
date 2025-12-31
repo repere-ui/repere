@@ -1,21 +1,20 @@
-import type { CalculatedBeaconPosition, Position } from "@repere/core";
+import type { CalculatedBeaconPosition, Offset, Position } from "@repere/core";
 import { createContext, useContext } from "react";
 
 export interface BeaconContextValue {
-  // Beacon identity
   beaconId: string;
-
-  // Position data
-  position: Position;
+  position: Position; // Trigger position
+  popoverPosition?: Position; // Popover position
+  popoverOffset?: Offset;
   calculatedPosition: CalculatedBeaconPosition | null;
-
+  isOpen: boolean;
+  toggle: () => void;
+  open: () => void;
+  close: () => void;
   dismiss: () => void;
-
-  // Animation configs (resolved from core)
-  triggerAnimation?: any;
-  popoverAnimation?: any;
-
-  popoverId: string;
+  triggerAnimation: any;
+  popoverAnimation: any;
+  popoverId?: string;
 }
 
 export const BeaconContext = createContext<BeaconContextValue | null>(null);

@@ -1,12 +1,7 @@
-// Re-export core types
-export type * from "@repere/core";
-// Renderer (internal, but exported for advanced use)
-export { BeaconRenderer } from "./components/BeaconRenderer";
-
 // Main component
 export { Beacons, type BeaconsProps } from "./components/Beacons";
 // UI Components
-export { ReperePopover } from "./components/ReperePopover";
+export { ReperePopover } from "./components/Popover";
 export { RepereTrigger } from "./components/RepereTrigger";
 // Context
 export {

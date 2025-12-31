@@ -37,63 +37,76 @@ export function BeaconRenderer({
   const popoverId = useId();
   const popoverRef = useRef<HTMLDivElement>(null);
 
+  // Resolve trigger config (beacon.trigger > config.trigger > defaults)
   const position: Position =
-    beacon.position || config.defaultPosition || DEFAULT_POSITION;
-  const zIndex = beacon.zIndex || config.defaultZIndex || 9999;
+    beacon.trigger?.position || config.trigger?.position || DEFAULT_POSITION;
+  const zIndex = beacon.trigger?.zIndex || config.trigger?.zIndex || 9999;
+  const offset = beacon.trigger?.offset;
 
   // Calculate position for the trigger
   const { calculatedPosition, targetElement } = useBeaconPosition({
-    targetSelector: beacon.target,
+    targetSelector: beacon.selector,
     position,
-    offset: beacon.offset,
+    offset,
     zIndex,
     enabled: true,
     debug,
   });
 
-  // Resolve animations
+  // Resolve trigger animations
   const triggerAnimationConfig = useMemo(() => {
-    const rootTriggerAnim = config.animations?.trigger?.onRender;
-    const beaconTriggerAnim = beacon.animations?.trigger?.onRender;
+    const rootTriggerAnim = config.trigger?.animations?.onRender;
+    const beaconTriggerAnim = beacon.trigger?.animations?.onRender;
     const merged = mergeAnimationConfigs(
       rootTriggerAnim as any,
       beaconTriggerAnim as any,
     );
     return getAnimationConfig(merged);
-  }, [config.animations, beacon.animations]);
+  }, [config.trigger?.animations, beacon.trigger?.animations]);
 
+  // Resolve popover animations
   const popoverAnimationConfig = useMemo(() => {
-    const rootPopoverAnim = config.animations?.popover?.onOpen;
-    const beaconPopoverAnim = beacon.animations?.popover?.onOpen;
+    const rootPopoverAnim = config.popover?.animations?.onOpen;
+    const beaconPopoverAnim = beacon.popover?.animations?.onOpen;
     const merged = mergeAnimationConfigs(
       rootPopoverAnim as any,
       beaconPopoverAnim as any,
     );
     return getAnimationConfig(merged);
-  }, [config.animations, beacon.animations]);
+  }, [config.popover?.animations, beacon.popover?.animations]);
 
-  // Actions - browser handles toggle/open/close via Popover API
+  // Actions
   const handleDismiss = async () => {
     await Promise.resolve(store.dismiss(beacon.id));
+    popoverRef.current?.hidePopover();
     onDismiss();
   };
+
+  const popoverPosition =
+    beacon.popover?.position || config.popover?.position || position;
+  const popoverOffset = beacon.popover?.offset ||
+    config.popover?.offset || { x: 0, y: 0 };
 
   // Context value
   const contextValue: BeaconContextValue = {
     beaconId: beacon.id,
     position,
+    popoverPosition,
+    popoverOffset,
     calculatedPosition,
+    isOpen: false,
+    toggle: () => popoverRef.current?.togglePopover(),
+    open: () => popoverRef.current?.showPopover(),
+    close: () => popoverRef.current?.hidePopover(),
     dismiss: handleDismiss,
     triggerAnimation: triggerAnimationConfig,
     popoverAnimation: popoverAnimationConfig,
     popoverId,
   };
 
-  // Get components from config
-  const triggerSource =
-    beacon.triggerComponent || config.beaconTriggerComponent;
-  const popoverSource =
-    beacon.popoverComponent || config.beaconPopoverComponent;
+  // Get components (beacon > config)
+  const triggerSource = beacon.trigger?.component || config.trigger?.component;
+  const popoverSource = beacon.popover.component || config.popover?.component;
 
   // Don't render if position not calculated yet
   if (!calculatedPosition || !targetElement) {
@@ -105,11 +118,11 @@ export function BeaconRenderer({
     return null;
   }
 
-  // Popover is required
+  // Popover component is required
   if (!popoverSource) {
     if (debug) {
       console.warn(
-        "[Repere] No popoverComponent provided for beacon:",
+        "[Repere] No popover component provided for beacon:",
         beacon.id,
       );
     }
@@ -131,14 +144,13 @@ export function BeaconRenderer({
         style={calculatedPosition}
         position={position}
         isOpen={false}
+        onClick={() => popoverRef.current?.togglePopover()}
       />
     );
   };
 
   // Render popover with Popover API
   const renderPopover = () => {
-    if (!popoverSource) return null;
-
     if (isValidElement(popoverSource)) {
       // Clone the element to add popover attributes
       return cloneElement(popoverSource as ReactElement<any>, {
@@ -155,6 +167,7 @@ export function BeaconRenderer({
           beacon={beacon}
           position={position}
           onDismiss={handleDismiss}
+          onClose={() => popoverRef.current?.hidePopover()}
         />
       </div>
     );

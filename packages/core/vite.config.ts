@@ -10,7 +10,12 @@ export default defineConfig({
       fileName: () => "index.js",
     },
     rollupOptions: {
-      external: [],
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === "style.css") return "styles.css";
+          return assetInfo.name ?? "assets/[name][extname]";
+        },
+      },
     },
   },
   plugins: [

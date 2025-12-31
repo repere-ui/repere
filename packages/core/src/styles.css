@@ -1,0 +1,135 @@
+/* Repere - Anchor Positioning Styles */
+
+/* Base popover anchor positioning */
+[data-repere-popover]:popover-open {
+    position: absolute;
+    position-anchor: var(--repere-anchor);
+    inset: unset;
+    margin: 0;
+}
+
+/* Bottom positions */
+[data-repere-popover][data-position="bottom-left"]:popover-open {
+    top: anchor(bottom);
+    left: anchor(left);
+    position-try-options: --bottom-right, --top-left, --top-right;
+}
+
+[data-repere-popover][data-position="bottom-center"]:popover-open {
+    top: anchor(bottom);
+    left: anchor(center);
+    translate: -50% 0;
+    position-try-options: --bottom-left, --bottom-right, --top-center;
+}
+
+[data-repere-popover][data-position="bottom-right"]:popover-open {
+    top: anchor(bottom);
+    right: anchor(right);
+    position-try-options: --bottom-left, --top-right, --top-left;
+}
+
+/* Top positions */
+[data-repere-popover][data-position="top-left"]:popover-open {
+    bottom: anchor(top);
+    left: anchor(left);
+    position-try-options: --top-right, --bottom-left, --bottom-right;
+}
+
+[data-repere-popover][data-position="top-center"]:popover-open {
+    bottom: anchor(top);
+    left: anchor(center);
+    translate: -50% 0;
+    position-try-options: --top-left, --top-right, --bottom-center;
+}
+
+[data-repere-popover][data-position="top-right"]:popover-open {
+    bottom: anchor(top);
+    right: anchor(right);
+    position-try-options: --top-left, --bottom-right, --bottom-left;
+}
+
+/* Left positions */
+[data-repere-popover][data-position="left-center"]:popover-open {
+    top: anchor(center);
+    right: anchor(left);
+    translate: 0 -50%;
+    position-try-options: --right-center, --bottom-center, --top-center;
+}
+
+/* Right positions */
+[data-repere-popover][data-position="right-center"]:popover-open {
+    top: anchor(center);
+    left: anchor(right);
+    translate: 0 -50%;
+    position-try-options: --left-center, --bottom-center, --top-center;
+}
+
+/* Trigger anchor */
+[data-repere-trigger] {
+    anchor-name: var(--repere-anchor);
+}
+
+/* Position try fallbacks */
+@position-try --bottom-left {
+    top: anchor(bottom);
+    left: anchor(left);
+    right: auto;
+    bottom: auto;
+    translate: 0 0;
+}
+
+@position-try --bottom-right {
+    top: anchor(bottom);
+    right: anchor(right);
+    left: auto;
+    bottom: auto;
+    translate: 0 0;
+}
+
+@position-try --bottom-center {
+    top: anchor(bottom);
+    left: anchor(center);
+    right: auto;
+    bottom: auto;
+    translate: -50% 0;
+}
+
+@position-try --top-left {
+    bottom: anchor(top);
+    left: anchor(left);
+    right: auto;
+    top: auto;
+    translate: 0 0;
+}
+
+@position-try --top-right {
+    bottom: anchor(top);
+    right: anchor(right);
+    left: auto;
+    top: auto;
+    translate: 0 0;
+}
+
+@position-try --top-center {
+    bottom: anchor(top);
+    left: anchor(center);
+    right: auto;
+    top: auto;
+    translate: -50% 0;
+}
+
+@position-try --left-center {
+    top: anchor(center);
+    right: anchor(left);
+    left: auto;
+    bottom: auto;
+    translate: 0 -50%;
+}
+
+@position-try --right-center {
+    top: anchor(center);
+    left: anchor(right);
+    right: auto;
+    bottom: auto;
+    translate: 0 -50%;
+}

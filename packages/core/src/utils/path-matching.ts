@@ -6,12 +6,10 @@ export function matchPath(
   currentPath: string,
   pattern: string | RegExp,
 ): boolean {
-  // RegExp matching
   if (pattern instanceof RegExp) {
     return pattern.test(currentPath);
   }
 
-  // Exact match
   if (pattern === currentPath) {
     return true;
   }
@@ -40,7 +38,7 @@ export function normalizePath(path: string): string {
 
   // Ensure leading slash
   if (!normalized.startsWith("/")) {
-    normalized = "/" + normalized;
+    normalized = `/${normalized}`;
   }
 
   return normalized;

@@ -35,8 +35,10 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
       left: calculatedPosition.left,
       zIndex: calculatedPosition.zIndex,
       pointerEvents: "auto" as const,
-      anchorName: `--repere-trigger-${beaconId}`,
       cursor: "pointer",
+      // Set CSS variable for anchor name
+      ["--repere-anchor" as any]: `--repere-trigger-${beaconId}`,
+      anchorName: `--repere-trigger-${beaconId}`,
     };
 
     const style = userStyle
@@ -62,7 +64,7 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
           variants={combinedVariants}
           transition={triggerAnimation.transition}
           {...props}
-          style={style as any}
+          style={style}
         >
           {children}
         </motion.button>

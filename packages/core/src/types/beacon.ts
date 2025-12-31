@@ -1,24 +1,32 @@
-import type { BeaconAnimations } from "./animations";
+import type { TriggerAnimations, PopoverAnimations } from "./animations";
 import type { Position } from "./position";
 
-export interface BeaconOffset {
+export interface Offset {
   x?: number;
   y?: number;
 }
 
+export interface TriggerConfig<TNode = unknown> {
+  position?: Position;
+  offset?: Offset;
+  zIndex?: number;
+  animations?: TriggerAnimations;
+  component?: TNode;
+}
+
+export interface PopoverConfig<TNode = unknown> {
+  position?: Position;
+  offset?: Offset;
+  animations?: PopoverAnimations;
+  component?: TNode;
+}
+
 export interface Beacon<TNode = unknown> {
   id: string;
-  target: string;
-  position?: Position;
-  offset?: BeaconOffset;
-  zIndex?: number;
+  selector: string;
 
-  // Framework-specific component nodes
-  triggerComponent?: TNode;
-  popoverComponent?: TNode;
-
-  // Animation overrides for this beacon
-  animations?: BeaconAnimations;
+  trigger?: TriggerConfig<TNode>;
+  popover: PopoverConfig<TNode>; // Required - you need a popover!
 }
 
 export interface CalculatedBeaconPosition {

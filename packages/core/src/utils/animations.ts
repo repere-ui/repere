@@ -102,18 +102,17 @@ export function combineTranslateWithAnimation(
   const translateXPercent = parsePercent(translate.x);
   const translateYPercent = parsePercent(translate.y);
 
-  // Helper to create transform string
   const createTransform = (yOffset: number = 0) => {
     if (translateYPercent === 0 && yOffset === 0) {
-      // Simple case: only x offset
       return `translate(${translateXPercent}%, 0)`;
-    } else if (yOffset === 0) {
-      // Only percentage offset
-      return `translate(${translateXPercent}%, ${translateYPercent}%)`;
-    } else {
-      // Need calc for combined percentage + pixel offset
-      return `translate(${translateXPercent}%, calc(${translateYPercent}% + ${yOffset}px))`;
     }
+
+    if (yOffset === 0) {
+      return `translate(${translateXPercent}%, ${translateYPercent}%)`;
+    }
+
+    // Need calc for combined percentage + pixel offset
+    return `translate(${translateXPercent}%, calc(${translateYPercent}% + ${yOffset}px))`;
   };
 
   return {

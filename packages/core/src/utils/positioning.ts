@@ -1,4 +1,4 @@
-import type { Position } from "../types/position";
+import { Position } from "../types/position";
 
 export interface PositionOffset {
   x?: number;
@@ -19,7 +19,7 @@ export interface PositionCoordinates {
  */
 export function calculateBeaconPosition(
   targetRect: DOMRect,
-  position: Position = "top-right",
+  position: Position = Position.TopRight,
   offset: PositionOffset = { x: 0, y: 0 },
 ): PositionCoordinates {
   const { x: offsetX = 0, y: offsetY = 0 } = offset;
@@ -30,19 +30,19 @@ export function calculateBeaconPosition(
 
   switch (position) {
     // Top positions
-    case "top-left":
+    case Position.TopLeft:
       top = targetRect.top + window.scrollY;
       left = targetRect.left + window.scrollX;
       translateX = "-50%";
       translateY = "-100%";
       break;
-    case "top-center":
+    case Position.TopCenter:
       top = targetRect.top + window.scrollY;
       left = targetRect.left + window.scrollX + targetRect.width / 2;
       translateX = "-50%";
       translateY = "-100%";
       break;
-    case "top-right":
+    case Position.TopRight:
       top = targetRect.top + window.scrollY;
       left = targetRect.right + window.scrollX;
       translateX = "-50%";
@@ -50,7 +50,7 @@ export function calculateBeaconPosition(
       break;
 
     // Right positions
-    case "right-center":
+    case Position.RightCenter:
       top = targetRect.top + window.scrollY + targetRect.height / 2;
       left = targetRect.right + window.scrollX;
       translateX = "0";
@@ -58,19 +58,19 @@ export function calculateBeaconPosition(
       break;
 
     // Bottom positions
-    case "bottom-left":
+    case Position.BottomLeft:
       top = targetRect.bottom + window.scrollY;
       left = targetRect.left + window.scrollX;
       translateX = "-50%";
       translateY = "0";
       break;
-    case "bottom-center":
+    case Position.BottomCenter:
       top = targetRect.bottom + window.scrollY;
       left = targetRect.left + window.scrollX + targetRect.width / 2;
       translateX = "-50%";
       translateY = "0";
       break;
-    case "bottom-right":
+    case Position.BottomRight:
       top = targetRect.bottom + window.scrollY;
       left = targetRect.right + window.scrollX;
       translateX = "-50%";
@@ -78,7 +78,7 @@ export function calculateBeaconPosition(
       break;
 
     // Left positions
-    case "left-center":
+    case Position.LeftCenter:
       top = targetRect.top + window.scrollY + targetRect.height / 2;
       left = targetRect.left + window.scrollX;
       translateX = "-100%";

@@ -8,9 +8,7 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./css": {
-      "default": "./dist/css/variables.css"
-    }
+    "./styles.css": "./dist/styles.css"
   },
   "files": [
     "dist"

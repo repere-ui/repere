@@ -14,8 +14,10 @@ export type {
 } from "./types/animations";
 export type {
   Beacon,
-  BeaconOffset,
   CalculatedBeaconPosition,
+  Offset,
+  PopoverConfig,
+  TriggerConfig,
 } from "./types/beacon";
 export type { ErrorHandling, Page, RepereConfig } from "./types/config";
 // Types
@@ -35,3 +37,4 @@ export {
   type PositionCoordinates,
   type PositionOffset,
 } from "./utils/positioning";
+import "./styles.css";
