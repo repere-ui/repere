@@ -1,3 +1,4 @@
+import type { Beacon, Position } from "@repere/core";
 import { getPopoverAnimationStyles } from "@repere/core";
 import {
   forwardRef,
@@ -15,6 +16,11 @@ export interface PopoverProps extends Omit<
   style?: React.CSSProperties;
   popover?: "auto" | "manual" | "hint" | "";
   disableAnimation?: boolean;
+  // Internal props passed by BeaconRenderer that should not reach the DOM
+  beacon?: Beacon;
+  position?: Position;
+  onDismiss?: () => void;
+  onClose?: () => void;
 }
 
 const Popover = forwardRef<HTMLDivElement, PopoverProps>(
@@ -24,7 +30,12 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       style: userStyle,
       popover = "auto",
       disableAnimation,
-      ...props
+      // Destructure and discard internal props so they don't spread to DOM
+      beacon: _beacon,
+      position: _position,
+      onDismiss: _onDismiss,
+      onClose: _onClose,
+      ...domProps
     },
     ref,
   ) => {
@@ -71,7 +82,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
         data-repere-popover=""
         data-position={popoverPosition}
         popover={popover}
-        {...props}
+        {...domProps}
         style={style}
       >
         {children}
