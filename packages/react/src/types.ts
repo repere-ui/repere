@@ -4,9 +4,7 @@ import type {
   Beacon,
   CalculatedBeaconPosition,
   Page,
-  PopoverConfig,
   RepereConfig,
-  TriggerConfig,
 } from "@repere/core";
 import type { ComponentType, ReactElement, ReactNode } from "react";
 
@@ -16,8 +14,6 @@ export type ReactComponent = ComponentType<any> | ReactElement;
 // React-specific beacon/config types
 export type ReactBeacon = Beacon<ReactComponent>;
 export type ReactPage = Page<ReactComponent>;
-export type ReactTriggerConfig = TriggerConfig<ReactComponent>;
-export type ReactPopoverConfig = PopoverConfig<ReactComponent>;
 
 // Main config type for Beacons component
 export interface RepereReactConfig extends RepereConfig<ReactComponent> {

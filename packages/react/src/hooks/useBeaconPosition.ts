@@ -22,7 +22,6 @@ export function useBeaconPosition({
   const [calculatedPosition, setCalculatedPosition] =
     useState<CalculatedBeaconPosition | null>(null);
 
-  // Create tracker instance (memoized)
   const tracker = useMemo(() => new PositionTracker(debug), [debug]);
 
   useEffect(() => {

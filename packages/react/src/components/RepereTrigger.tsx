@@ -1,28 +1,50 @@
 import { combineTranslateWithAnimation } from "@repere/core";
 import { motion, type Variants } from "motion/react";
-import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type ElementType,
+  forwardRef,
+  type ReactNode,
+  useMemo,
+} from "react";
 import { useBeaconContext } from "../context/BeaconContext";
 
-interface RepereTriggerProps extends Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  | "style"
-  | "onDrag"
-  | "onDragStart"
-  | "onDragEnd"
-  | "onAnimationStart"
-  | "onAnimationEnd"
-  | "onAnimationIteration"
-> {
+type PolymorphicRef<C extends ElementType> = ComponentPropsWithoutRef<C>["ref"];
+
+type RepereTriggerOwnProps<C extends ElementType = ElementType> = {
+  as?: C;
   children?: ReactNode;
-  asChild?: boolean;
   style?: React.CSSProperties;
   disableAnimation?: boolean;
-}
+};
 
-const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
-  (
-    { children, asChild, style: userStyle, disableAnimation, ...props },
-    ref,
+export type RepereTriggerProps<C extends ElementType = "button"> =
+  RepereTriggerOwnProps<C> &
+    Omit<
+      ComponentPropsWithoutRef<C>,
+      | keyof RepereTriggerOwnProps<C>
+      | "onDrag"
+      | "onDragStart"
+      | "onDragEnd"
+      | "onAnimationStart"
+      | "onAnimationEnd"
+      | "onAnimationIteration"
+    >;
+
+type RepereTriggerComponent = <C extends ElementType = "button">(
+  props: RepereTriggerProps<C> & { ref?: PolymorphicRef<C> },
+) => React.ReactElement | null;
+
+const RepereTriggerImpl = forwardRef(
+  <C extends ElementType = "button">(
+    {
+      children,
+      as,
+      style: userStyle,
+      disableAnimation,
+      ...props
+    }: RepereTriggerProps<C>,
+    ref?: PolymorphicRef<C>,
   ) => {
     const {
       calculatedPosition,
@@ -34,6 +56,18 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
     } = useBeaconContext();
 
     if (!calculatedPosition) return null;
+
+    const Component = (as || "button") as ElementType;
+
+    // Memoize the motion component to prevent recreation on every render
+    const MotionComponent = useMemo(() => {
+      // Use the pre-built motion.button for the default case (optimization)
+      if (!as || as === "button") {
+        return motion.button;
+      }
+      // Only create dynamic motion component for custom elements
+      return motion(Component);
+    }, [as, Component]);
 
     const positionStyle = {
       position: calculatedPosition.position,
@@ -52,6 +86,14 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
     const shouldAnimate =
       !disableAnimation && (triggerAnimation || triggerDismissAnimation);
 
+    const commonProps = {
+      ref,
+      popovertarget: popoverId,
+      "aria-label": `Beacon trigger for ${beaconId}`,
+      "data-repere-trigger": "",
+      ...props,
+    };
+
     if (shouldAnimate) {
       // Use dismiss animation when dismissing, otherwise use render animation
       const activeAnimation =
@@ -67,30 +109,22 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
       ) as unknown as Variants;
 
       return (
-        <motion.button
-          ref={ref}
-          popovertarget={popoverId}
-          aria-label={`Beacon trigger for ${beaconId}`}
-          data-repere-trigger=""
+        <MotionComponent
           initial="initial"
           animate={isDismissing ? "exit" : "animate"}
           variants={combinedVariants}
           transition={activeAnimation.transition as any}
-          {...props}
+          {...commonProps}
           style={style}
         >
           {children}
-        </motion.button>
+        </MotionComponent>
       );
     }
 
     return (
-      <button
-        ref={ref}
-        popovertarget={popoverId}
-        aria-label={`Beacon trigger for ${beaconId}`}
-        data-repere-trigger=""
-        {...props}
+      <Component
+        {...commonProps}
         style={
           {
             ...style,
@@ -99,9 +133,13 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
         }
       >
         {children}
-      </button>
+      </Component>
     );
   },
-);
-RepereTrigger.displayName = "RepereTrigger";
+) as RepereTriggerComponent;
+
+const RepereTrigger = Object.assign(RepereTriggerImpl, {
+  displayName: "RepereTrigger",
+});
+
 export { RepereTrigger };
