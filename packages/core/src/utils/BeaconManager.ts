@@ -12,8 +12,8 @@ export interface BeaconManagerOptions {
  * Handles page matching and beacon filtering
  */
 export class BeaconManager<TComponent = unknown> {
-  private store: BeaconStore;
-  private debug: boolean;
+  private readonly store: BeaconStore;
+  private readonly debug: boolean;
 
   constructor(store: BeaconStore, options: BeaconManagerOptions = {}) {
     this.store = store;

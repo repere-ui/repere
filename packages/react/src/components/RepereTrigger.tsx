@@ -2,8 +2,10 @@ import { combineTranslateWithAnimation } from "@repere/core";
 import { motion, type Variants } from "motion/react";
 import {
   type ComponentPropsWithoutRef,
+  type CSSProperties,
   type ElementType,
   forwardRef,
+  type ReactElement,
   type ReactNode,
   useMemo,
 } from "react";
@@ -14,7 +16,7 @@ type PolymorphicRef<C extends ElementType> = ComponentPropsWithoutRef<C>["ref"];
 type RepereTriggerOwnProps<C extends ElementType = ElementType> = {
   as?: C;
   children?: ReactNode;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   disableAnimation?: boolean;
 };
 
@@ -33,7 +35,7 @@ export type RepereTriggerProps<C extends ElementType = "button"> =
 
 type RepereTriggerComponent = <C extends ElementType = "button">(
   props: RepereTriggerProps<C> & { ref?: PolymorphicRef<C> },
-) => React.ReactElement | null;
+) => ReactElement | null;
 
 const RepereTriggerImpl = forwardRef(
   <C extends ElementType = "button">(
@@ -55,8 +57,6 @@ const RepereTriggerImpl = forwardRef(
       popoverId,
     } = useBeaconContext();
 
-    if (!calculatedPosition) return null;
-
     const Component = (as || "button") as ElementType;
 
     // Memoize the motion component to prevent recreation on every render
@@ -66,8 +66,10 @@ const RepereTriggerImpl = forwardRef(
         return motion.button;
       }
       // Only create dynamic motion component for custom elements
-      return motion(Component);
+      return motion.create(Component);
     }, [as, Component]);
+
+    if (!calculatedPosition) return null;
 
     const positionStyle = {
       position: calculatedPosition.position,

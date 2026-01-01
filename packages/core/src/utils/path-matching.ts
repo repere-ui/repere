@@ -24,22 +24,3 @@ export function matchPath(
 
   return false;
 }
-
-/**
- * Normalize path (remove trailing slash, ensure leading slash)
- */
-export function normalizePath(path: string): string {
-  let normalized = path.trim();
-
-  // Remove trailing slash (except for root)
-  if (normalized.length > 1 && normalized.endsWith("/")) {
-    normalized = normalized.slice(0, -1);
-  }
-
-  // Ensure leading slash
-  if (!normalized.startsWith("/")) {
-    normalized = `/${normalized}`;
-  }
-
-  return normalized;
-}
