@@ -1,7 +1,7 @@
-import { MemoryStore, matchPath } from "@repere/core";
+import { BeaconManager, MemoryStore } from "@repere/core";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import type { RepereReactConfig } from "../types";
+import type { ReactBeacon, ReactComponent, RepereReactConfig } from "../types";
 import { BeaconRenderer } from "./BeaconRenderer";
 
 export interface BeaconsProps {
@@ -25,61 +25,48 @@ export function Beacons({
     [config.store],
   );
 
-  // Find matching page
-  const matchingPage = useMemo(() => {
-    if (!enabled) return null;
+  // Create beacon manager with ReactComponent type
+  const beaconManager = useMemo(
+    () => new BeaconManager<ReactComponent>(store, { debug }),
+    [store, debug],
+  );
 
-    const match = config.pages.find((page) => {
-      if (typeof page.path === "function") {
-        return page.path(currentPath);
-      }
-      return matchPath(currentPath, page.path);
-    });
+  // Track active beacons for current path
+  const [activeBeacons, setActiveBeacons] = useState<ReactBeacon[]>([]);
 
-    if (debug) {
-      console.log("[Repere] Path:", currentPath, "Matched:", match?.id);
-    }
-
-    return match;
-  }, [config.pages, currentPath, enabled, debug]);
-
-  // Track dismissed beacons
+  // Track dismissed beacons (for optimistic UI updates)
   const [dismissedBeacons, setDismissedBeacons] = useState<Set<string>>(
     new Set(),
   );
 
-  // Load dismissed state when page changes
+  // Load active beacons when path or enabled state changes
   useEffect(() => {
-    if (!matchingPage) {
+    if (!enabled) {
+      setActiveBeacons([]);
       setDismissedBeacons(new Set());
       return;
     }
 
-    const loadDismissed = async () => {
-      const dismissed = new Set<string>();
-
-      for (const beacon of matchingPage.beacons) {
-        const isDismissed = await Promise.resolve(store.isDismissed(beacon.id));
-        if (isDismissed) {
-          dismissed.add(beacon.id);
-        }
-      }
-
-      setDismissedBeacons(dismissed);
+    const loadActiveBeacons = async () => {
+      const beacons = await beaconManager.getActiveBeacons(
+        config.pages,
+        currentPath,
+      );
+      setActiveBeacons(beacons as ReactBeacon[]);
     };
 
-    loadDismissed();
-  }, [matchingPage, store]);
+    loadActiveBeacons();
+  }, [beaconManager, config.pages, currentPath, enabled]);
 
   const handleDismiss = (beaconId: string) => {
+    // Optimistically update UI
     setDismissedBeacons((prev) => new Set([...prev, beaconId]));
   };
 
-  // Filter beacons
-  const beaconsToRender =
-    matchingPage?.beacons.filter(
-      (beacon) => !dismissedBeacons.has(beacon.id),
-    ) || [];
+  // Filter out beacons that were dismissed in this session (optimistic update)
+  const beaconsToRender = activeBeacons.filter(
+    (beacon) => !dismissedBeacons.has(beacon.id),
+  );
 
   if (beaconsToRender.length === 0) {
     return null;

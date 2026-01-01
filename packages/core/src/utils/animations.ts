@@ -159,3 +159,25 @@ export function getPopoverAnimationStyles(
     "--repere-transition-timing": timingFunction,
   };
 }
+
+/**
+ * Calculate the total duration needed for dismiss animations
+ * Returns the maximum of trigger and popover animation durations
+ */
+export function calculateDismissDuration(
+  triggerDismissAnimation?: ResolvedAnimationConfig | null,
+  popoverCloseAnimation?: ResolvedAnimationConfig | null,
+): number {
+  const triggerDuration = triggerDismissAnimation?.transition.duration ?? 0;
+  const popoverDuration = popoverCloseAnimation?.transition.duration ?? 0;
+
+  // Convert to milliseconds and return the maximum
+  return Math.max(triggerDuration, popoverDuration) * 1000;
+}
+
+/**
+ * Create a promise that resolves after the given animation duration
+ */
+export function waitForAnimations(durationMs: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, durationMs));
+}

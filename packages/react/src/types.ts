@@ -1,9 +1,10 @@
 import type {
+  BasePopoverProps,
+  BaseTriggerProps,
   Beacon,
   CalculatedBeaconPosition,
   Page,
   PopoverConfig,
-  Position,
   RepereConfig,
   TriggerConfig,
 } from "@repere/core";
@@ -23,20 +24,17 @@ export interface RepereReactConfig extends RepereConfig<ReactComponent> {
   pages: ReactPage[];
 }
 
-// Props that trigger components receive
-export interface TriggerComponentProps {
+// Props that trigger components receive (extends base with React-specific)
+export interface TriggerComponentProps extends BaseTriggerProps {
   beacon: ReactBeacon;
   style: CalculatedBeaconPosition;
-  position: Position;
-  isOpen: boolean;
   onClick: () => void;
   popoverTarget?: string;
 }
 
-// Props that popover components receive
-export interface PopoverComponentProps {
+// Props that popover components receive (extends base with React-specific)
+export interface PopoverComponentProps extends BasePopoverProps {
   beacon: ReactBeacon;
-  position: Position;
   onDismiss: () => void;
   onClose: () => void;
 }

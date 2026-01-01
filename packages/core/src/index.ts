@@ -12,6 +12,11 @@ export {
   type TriggerAnimations,
 } from "./types/animations";
 export type {
+  BasePopoverProps,
+  BaseTriggerProps,
+  BeaconActions,
+} from "./types/base";
+export type {
   Beacon,
   CalculatedBeaconPosition,
   Offset,
@@ -23,12 +28,16 @@ export type { ErrorHandling, Page, RepereConfig } from "./types/config";
 export { Position } from "./types/position";
 export type { BeaconState, BeaconStore } from "./types/store";
 export {
+  calculateDismissDuration,
   combineTranslateWithAnimation,
   getAnimationConfig,
   getPopoverAnimationStyles,
   mergeAnimationConfigs,
   normalizeAnimationConfig,
+  waitForAnimations,
 } from "./utils/animations";
+export { BeaconManager } from "./utils/BeaconManager";
+export { PositionTracker } from "./utils/PositionTracker";
 // Path matching utilities
 export { matchPath, normalizePath } from "./utils/path-matching";
 // Positioning utilities

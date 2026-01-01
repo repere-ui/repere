@@ -1,8 +1,10 @@
 import type { Beacon, BeaconStore, Position } from "@repere/core";
 import {
+  calculateDismissDuration,
   DEFAULT_POSITION,
   getAnimationConfig,
   mergeAnimationConfigs,
+  waitForAnimations,
 } from "@repere/core";
 import {
   cloneElement,
@@ -151,18 +153,13 @@ export function BeaconRenderer({
     popoverElement?.hidePopover();
 
     // Calculate total animation duration
-    const popoverCloseDuration =
-      (popoverCloseAnimationConfig?.transition.duration ?? 0.3) * 1000;
-    const triggerDismissDuration = triggerAnimationConfig?.transition.duration
-      ? triggerAnimationConfig.transition.duration * 1000
-      : 0;
-    const totalDuration = Math.max(
-      popoverCloseDuration,
-      triggerDismissDuration,
+    const duration = calculateDismissDuration(
+      triggerDismissAnimationConfig,
+      popoverCloseAnimationConfig,
     );
 
     // Wait for animations to complete
-    await new Promise((resolve) => setTimeout(resolve, totalDuration));
+    await waitForAnimations(duration);
 
     // Actually dismiss and remove from DOM
     await Promise.resolve(store.dismiss(beacon.id));
