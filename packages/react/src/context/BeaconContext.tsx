@@ -13,11 +13,13 @@ export interface BeaconContextValue {
   popoverOffset?: Offset;
   calculatedPosition: CalculatedBeaconPosition | null;
   isOpen: boolean;
+  isDismissing: boolean;
   toggle: () => void;
   open: () => void;
   close: () => void;
   dismiss: () => void;
   triggerAnimation: ResolvedAnimationConfig | null;
+  triggerDismissAnimation: ResolvedAnimationConfig | null;
   popoverOpenAnimation: ResolvedAnimationConfig | null;
   popoverCloseAnimation: ResolvedAnimationConfig | null;
   popoverId?: string;

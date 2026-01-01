@@ -38,6 +38,7 @@ export function BeaconRenderer({
 }: BeaconRendererProps) {
   const popoverId = useId();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDismissing, setIsDismissing] = useState(false);
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(
     null,
   );
@@ -88,6 +89,19 @@ export function BeaconRenderer({
     return getAnimationConfig(merged);
   }, [config.trigger?.animations, beacon.trigger?.animations]);
 
+  const triggerDismissAnimationConfig = useMemo(() => {
+    const rootTriggerAnim = config.trigger?.animations?.onDismiss;
+    const beaconTriggerAnim = beacon.trigger?.animations?.onDismiss;
+    const merged = mergeAnimationConfigs(
+      rootTriggerAnim as any,
+      beaconTriggerAnim as any,
+    );
+    return getAnimationConfig(merged);
+  }, [
+    config.trigger?.animations?.onDismiss,
+    beacon.trigger?.animations?.onDismiss,
+  ]);
+
   // Resolve popover animations
   const popoverOpenAnimationConfig = useMemo(() => {
     const rootPopoverAnim = config.popover?.animations?.onOpen;
@@ -130,8 +144,28 @@ export function BeaconRenderer({
 
   // Actions
   const handleDismiss = async () => {
-    await Promise.resolve(store.dismiss(beacon.id));
+    // Start dismiss animation
+    setIsDismissing(true);
+
+    // Close the popover (this will trigger close animation)
     popoverElement?.hidePopover();
+
+    // Calculate total animation duration
+    const popoverCloseDuration =
+      (popoverCloseAnimationConfig?.transition.duration ?? 0.3) * 1000;
+    const triggerDismissDuration = triggerAnimationConfig?.transition.duration
+      ? triggerAnimationConfig.transition.duration * 1000
+      : 0;
+    const totalDuration = Math.max(
+      popoverCloseDuration,
+      triggerDismissDuration,
+    );
+
+    // Wait for animations to complete
+    await new Promise((resolve) => setTimeout(resolve, totalDuration));
+
+    // Actually dismiss and remove from DOM
+    await Promise.resolve(store.dismiss(beacon.id));
     onDismiss();
   };
 
@@ -148,11 +182,13 @@ export function BeaconRenderer({
     popoverOffset,
     calculatedPosition,
     isOpen,
+    isDismissing,
     toggle: togglePopover,
     open: showPopover,
     close: hidePopover,
     dismiss: handleDismiss,
     triggerAnimation: triggerAnimationConfig,
+    triggerDismissAnimation: triggerDismissAnimationConfig,
     popoverOpenAnimation: popoverOpenAnimationConfig,
     popoverCloseAnimation: popoverCloseAnimationConfig,
     popoverId,

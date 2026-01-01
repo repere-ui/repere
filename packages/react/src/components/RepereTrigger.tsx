@@ -24,8 +24,14 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
     { children, asChild, style: userStyle, disableAnimation, ...props },
     ref,
   ) => {
-    const { calculatedPosition, beaconId, triggerAnimation, popoverId } =
-      useBeaconContext();
+    const {
+      calculatedPosition,
+      beaconId,
+      triggerAnimation,
+      triggerDismissAnimation,
+      isDismissing,
+      popoverId,
+    } = useBeaconContext();
 
     if (!calculatedPosition) return null;
 
@@ -36,8 +42,6 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
       zIndex: calculatedPosition.zIndex,
       pointerEvents: "auto" as const,
       cursor: "pointer",
-      // Set CSS variable for anchor name
-      ["--repere-anchor" as any]: `--repere-trigger-${beaconId}`,
       anchorName: `--repere-trigger-${beaconId}`,
     };
 
@@ -45,12 +49,21 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
       ? { ...positionStyle, ...userStyle }
       : positionStyle;
 
-    const shouldAnimate = !disableAnimation && triggerAnimation;
+    const shouldAnimate =
+      !disableAnimation && (triggerAnimation || triggerDismissAnimation);
 
     if (shouldAnimate) {
+      // Use dismiss animation when dismissing, otherwise use render animation
+      const activeAnimation =
+        isDismissing && triggerDismissAnimation
+          ? triggerDismissAnimation
+          : triggerAnimation;
+
+      if (!activeAnimation) return null;
+
       const combinedVariants = combineTranslateWithAnimation(
         calculatedPosition.translate,
-        triggerAnimation.variants,
+        activeAnimation.variants,
       ) as unknown as Variants;
 
       return (
@@ -60,9 +73,9 @@ const RepereTrigger = forwardRef<HTMLButtonElement, RepereTriggerProps>(
           aria-label={`Beacon trigger for ${beaconId}`}
           data-repere-trigger=""
           initial="initial"
-          animate="animate"
+          animate={isDismissing ? "exit" : "animate"}
           variants={combinedVariants}
-          transition={triggerAnimation.transition as any}
+          transition={activeAnimation.transition as any}
           {...props}
           style={style}
         >
