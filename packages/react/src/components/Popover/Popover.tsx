@@ -6,17 +6,15 @@ import {
   type ReactNode,
   useCallback,
 } from "react";
-import { useBeaconContext } from "../../context/BeaconContext";
+import { useRepereContext } from "../../context/RepereContext";
 
-export interface PopoverProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "style"
-> {
+export interface PopoverProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children: ReactNode;
   style?: React.CSSProperties;
   popover?: "auto" | "manual" | "hint" | "";
   disableAnimation?: boolean;
-  // Internal props passed by BeaconRenderer that should not reach the DOM
+  // Internal props passed by RepereProvider that should not reach the DOM
   beacon?: Beacon;
   position?: Position;
   onDismiss?: () => void;
@@ -45,7 +43,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       popoverCloseAnimation,
       popoverPosition,
       popoverOffset,
-    } = useBeaconContext();
+    } = useRepereContext();
 
     // Combine refs
     const internalRef = useCallback(

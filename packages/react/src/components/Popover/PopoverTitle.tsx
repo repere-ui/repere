@@ -4,7 +4,7 @@ import {
   forwardRef,
   type ReactNode,
 } from "react";
-import { useBeaconContext } from "../../context/BeaconContext";
+import { useRepereContext } from "../../context/RepereContext";
 
 type PolymorphicRef<C extends ElementType> = ComponentPropsWithoutRef<C>["ref"];
 
@@ -22,7 +22,7 @@ const PopoverTitleImpl = forwardRef(
     { children, as, ...props }: PopoverTitleProps<C>,
     ref?: PolymorphicRef<C>,
   ) => {
-    const context = useBeaconContext();
+    const context = useRepereContext();
     const beaconId = context?.beaconId || "unknown";
 
     const Component = (as || "h3") as ElementType;

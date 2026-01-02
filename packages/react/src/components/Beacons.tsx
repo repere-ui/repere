@@ -2,7 +2,7 @@ import { BeaconManager, MemoryStore } from "@repere/core";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import type { ReactBeacon, ReactComponent, RepereReactConfig } from "../types";
-import { BeaconRenderer } from "./BeaconRenderer";
+import { RepereProvider } from "./RepereProvider";
 
 export interface BeaconsProps {
   config: RepereReactConfig;
@@ -74,7 +74,7 @@ export function Beacons({
 
   return createPortal(
     beaconsToRender.map((beacon) => (
-      <BeaconRenderer
+      <RepereProvider
         key={beacon.id}
         beacon={beacon}
         config={config}

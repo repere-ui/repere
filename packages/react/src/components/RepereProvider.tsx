@@ -1,4 +1,9 @@
-import type { Beacon, BeaconStore, Position } from "@repere/core";
+import type {
+  Beacon,
+  BeaconStore,
+  CalculatedBeaconPosition,
+  Position,
+} from "@repere/core";
 import {
   calculateDismissDuration,
   DEFAULT_POSITION,
@@ -17,13 +22,13 @@ import {
   useState,
 } from "react";
 import {
-  BeaconContext,
-  type BeaconContextValue,
-} from "../context/BeaconContext";
+  RepereContext,
+  type RepereContextValue,
+} from "../context/RepereContext";
 import { useBeaconPosition } from "../hooks/useBeaconPosition";
-import type { RepereReactConfig } from "../types";
+import type { RepereReactConfig, ToggleEvent } from "../types";
 
-interface BeaconRendererProps {
+interface RepereProviderProps {
   beacon: Beacon;
   config: RepereReactConfig;
   store: BeaconStore;
@@ -31,13 +36,13 @@ interface BeaconRendererProps {
   debug?: boolean;
 }
 
-export function BeaconRenderer({
+export function RepereProvider({
   beacon,
   config,
   store,
   onDismiss,
   debug,
-}: BeaconRendererProps) {
+}: RepereProviderProps) {
   const popoverId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [isDismissing, setIsDismissing] = useState(false);
@@ -84,20 +89,14 @@ export function BeaconRenderer({
   const triggerAnimationConfig = useMemo(() => {
     const rootTriggerAnim = config.trigger?.animations?.onRender;
     const beaconTriggerAnim = beacon.trigger?.animations?.onRender;
-    const merged = mergeAnimationConfigs(
-      rootTriggerAnim as any,
-      beaconTriggerAnim as any,
-    );
+    const merged = mergeAnimationConfigs(rootTriggerAnim, beaconTriggerAnim);
     return getAnimationConfig(merged);
   }, [config.trigger?.animations, beacon.trigger?.animations]);
 
   const triggerDismissAnimationConfig = useMemo(() => {
     const rootTriggerAnim = config.trigger?.animations?.onDismiss;
     const beaconTriggerAnim = beacon.trigger?.animations?.onDismiss;
-    const merged = mergeAnimationConfigs(
-      rootTriggerAnim as any,
-      beaconTriggerAnim as any,
-    );
+    const merged = mergeAnimationConfigs(rootTriggerAnim, beaconTriggerAnim);
     return getAnimationConfig(merged);
   }, [
     config.trigger?.animations?.onDismiss,
@@ -108,10 +107,7 @@ export function BeaconRenderer({
   const popoverOpenAnimationConfig = useMemo(() => {
     const rootPopoverAnim = config.popover?.animations?.onOpen;
     const beaconPopoverAnim = beacon.popover?.animations?.onOpen;
-    const merged = mergeAnimationConfigs(
-      rootPopoverAnim as any,
-      beaconPopoverAnim as any,
-    );
+    const merged = mergeAnimationConfigs(rootPopoverAnim, beaconPopoverAnim);
     const result = getAnimationConfig(merged);
     return result;
   }, [config.popover?.animations?.onOpen, beacon.popover?.animations?.onOpen]);
@@ -120,10 +116,7 @@ export function BeaconRenderer({
     const rootPopoverAnim = config.popover?.animations?.onClose;
     const beaconPopoverAnim = beacon.popover?.animations?.onClose;
 
-    const merged = mergeAnimationConfigs(
-      rootPopoverAnim as any,
-      beaconPopoverAnim as any,
-    );
+    const merged = mergeAnimationConfigs(rootPopoverAnim, beaconPopoverAnim);
     const result = getAnimationConfig(merged);
     return result;
   }, [
@@ -136,7 +129,7 @@ export function BeaconRenderer({
     if (!popoverElement) return;
 
     const handleToggle = (e: Event) => {
-      const toggleEvent = e as any;
+      const toggleEvent = e as ToggleEvent;
       setIsOpen(toggleEvent.newState === "open");
     };
 
@@ -172,7 +165,7 @@ export function BeaconRenderer({
     config.popover?.offset || { x: 0, y: 0 };
 
   // Context value
-  const contextValue: BeaconContextValue = {
+  const contextValue: RepereContextValue = {
     beaconId: beacon.id,
     position,
     popoverPosition,
@@ -224,7 +217,13 @@ export function BeaconRenderer({
       return triggerSource;
     }
 
-    const TriggerComponent = triggerSource as React.ComponentType<any>;
+    const TriggerComponent = triggerSource as React.ComponentType<{
+      beacon: Beacon<unknown>;
+      style?: CalculatedBeaconPosition;
+      position?: Position;
+      isOpen: boolean;
+      onClick: () => void;
+    }>;
     return (
       <TriggerComponent
         beacon={beacon}
@@ -243,7 +242,12 @@ export function BeaconRenderer({
     if (isValidElement(popoverSource)) {
       element = popoverSource;
     } else {
-      const PopoverComponent = popoverSource as React.ComponentType<any>;
+      const PopoverComponent = popoverSource as React.ComponentType<{
+        beacon: Beacon<unknown>;
+        position?: Position;
+        onDismiss: () => void;
+        onClose: () => void;
+      }>;
       element = (
         <PopoverComponent
           beacon={beacon}
@@ -263,9 +267,9 @@ export function BeaconRenderer({
   };
 
   return (
-    <BeaconContext.Provider value={contextValue}>
+    <RepereContext.Provider value={contextValue}>
       {renderTrigger()}
       {renderPopover()}
-    </BeaconContext.Provider>
+    </RepereContext.Provider>
   );
 }

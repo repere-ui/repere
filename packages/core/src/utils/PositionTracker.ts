@@ -56,8 +56,8 @@ export class PositionTracker {
       });
     }
 
-    const tracked = this.tracked.get(key)!;
-    tracked.callbacks.add(callback);
+    const tracked = this.tracked.get(key);
+    tracked?.callbacks.add(callback);
 
     // Start listeners if this is the first subscription
     if (this.tracked.size === 1) {
@@ -97,7 +97,9 @@ export class PositionTracker {
         console.log(`[PositionTracker] Element not found: ${tracked.selector}`);
       }
       tracked.element = null;
-      tracked.callbacks.forEach((cb) => cb(null));
+      for (const cb of tracked.callbacks) {
+        cb(null);
+      }
       return;
     }
 
@@ -122,11 +124,15 @@ export class PositionTracker {
       );
     }
 
-    tracked.callbacks.forEach((cb) => cb(calculatedPosition));
+    for (const cb of tracked.callbacks) {
+      cb(calculatedPosition);
+    }
   }
 
   private updateAllPositions = () => {
-    this.tracked.forEach((_, key) => this.updatePosition(key));
+    for (const [key] of this.tracked) {
+      this.updatePosition(key);
+    }
   };
 
   private startListening() {

@@ -1,4 +1,4 @@
-import type { TriggerAnimations, PopoverAnimations } from "./animations";
+import type { PopoverAnimations, TriggerAnimations } from "./animations";
 import type { Position } from "./position";
 
 export interface Offset {

@@ -6,7 +6,7 @@ import type {
 } from "@repere/core";
 import { createContext, useContext } from "react";
 
-export interface BeaconContextValue {
+export interface RepereContextValue {
   beaconId: string;
   position: Position;
   popoverPosition?: Position;
@@ -25,15 +25,12 @@ export interface BeaconContextValue {
   popoverId?: string;
 }
 
-export const BeaconContext = createContext<BeaconContextValue | null>(null);
+export const RepereContext = createContext<RepereContextValue | null>(null);
 
-export function useBeaconContext(): BeaconContextValue {
-  const context = useContext(BeaconContext);
+export function useRepereContext(): RepereContextValue {
+  const context = useContext(RepereContext);
   if (!context) {
-    throw new Error(
-      "useBeaconContext must be used within a Beacon provider. " +
-        "This is an internal error - beacons should be rendered via useRepere().",
-    );
+    throw new Error("useRepereContext must be used within a Repere provider.");
   }
   return context;
 }

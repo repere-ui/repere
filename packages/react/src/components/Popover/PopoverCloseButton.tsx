@@ -1,7 +1,8 @@
 import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from "react";
-import { useBeaconContext } from "../../context/BeaconContext";
+import { useRepereContext } from "../../context/RepereContext";
 
-export interface PopoverCloseButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface PopoverCloseButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
 }
 
@@ -9,7 +10,7 @@ const PopoverCloseButton = forwardRef<
   HTMLButtonElement,
   PopoverCloseButtonProps
 >(({ children = "×", ...props }, ref) => {
-  const context = useBeaconContext();
+  const context = useRepereContext();
   const popoverId = context?.popoverId;
 
   return (

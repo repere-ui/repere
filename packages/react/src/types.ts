@@ -8,8 +8,14 @@ import type {
 } from "@repere/core";
 import type { ComponentType, ReactElement, ReactNode } from "react";
 
+// Popover state
+export interface ToggleEvent extends Event {
+  newState: "open" | "closed";
+  oldState: "open" | "closed";
+}
+
 // React-specific component types
-export type ReactComponent = ComponentType<any> | ReactElement;
+export type ReactComponent = ComponentType<unknown> | ReactElement;
 
 // React-specific beacon/config types
 export type ReactBeacon = Beacon<ReactComponent>;
@@ -51,12 +57,14 @@ export type PopoverComponent =
 import "react";
 
 declare module "react" {
+  // biome-ignore lint: T is required to match React's interface signature
   interface HTMLAttributes<T> {
     popover?: "auto" | "manual" | "hint" | "";
     popovertarget?: string;
     popovertargetaction?: "show" | "hide" | "toggle";
   }
 
+  // biome-ignore lint: T is required to match React's interface signature
   interface ButtonHTMLAttributes<T> {
     popover?: "auto" | "manual" | "hint" | "";
     popovertarget?: string;

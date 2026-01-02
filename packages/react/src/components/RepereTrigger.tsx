@@ -1,5 +1,5 @@
 import { combineTranslateWithAnimation } from "@repere/core";
-import { motion, type Variants } from "motion/react";
+import { motion, type Transition, type Variants } from "motion/react";
 import {
   type ComponentPropsWithoutRef,
   type CSSProperties,
@@ -9,7 +9,7 @@ import {
   type ReactNode,
   useMemo,
 } from "react";
-import { useBeaconContext } from "../context/BeaconContext";
+import { useRepereContext } from "../context/RepereContext";
 
 type PolymorphicRef<C extends ElementType> = ComponentPropsWithoutRef<C>["ref"];
 
@@ -55,7 +55,7 @@ const RepereTriggerImpl = forwardRef(
       triggerDismissAnimation,
       isDismissing,
       popoverId,
-    } = useBeaconContext();
+    } = useRepereContext();
 
     const Component = (as || "button") as ElementType;
 
@@ -97,7 +97,6 @@ const RepereTriggerImpl = forwardRef(
     };
 
     if (shouldAnimate) {
-      // Use dismiss animation when dismissing, otherwise use render animation
       const activeAnimation =
         isDismissing && triggerDismissAnimation
           ? triggerDismissAnimation
@@ -115,7 +114,7 @@ const RepereTriggerImpl = forwardRef(
           initial="initial"
           animate={isDismissing ? "exit" : "animate"}
           variants={combinedVariants}
-          transition={activeAnimation.transition as any}
+          transition={activeAnimation.transition as Transition}
           {...commonProps}
           style={style}
         >
@@ -127,12 +126,10 @@ const RepereTriggerImpl = forwardRef(
     return (
       <Component
         {...commonProps}
-        style={
-          {
-            ...style,
-            translate: `${calculatedPosition.translate.x} ${calculatedPosition.translate.y}`,
-          } as React.CSSProperties
-        }
+        style={{
+          ...style,
+          translate: `${calculatedPosition.translate.x} ${calculatedPosition.translate.y}`,
+        }}
       >
         {children}
       </Component>

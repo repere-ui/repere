@@ -1,11 +1,10 @@
-// Constants
 export { DEFAULT_POSITION } from "./constants/beacon";
 
-// Store
 export { MemoryStore } from "./store/memory-store";
 export { Animation, type ResolvedAnimationConfig } from "./types/animations";
-// Types - Public API
+
 export type { BasePopoverProps, BaseTriggerProps } from "./types/base";
+
 export type {
   Beacon,
   CalculatedBeaconPosition,
@@ -17,7 +16,6 @@ export type { Page, RepereConfig } from "./types/config";
 export { Position } from "./types/position";
 export type { BeaconStore } from "./types/store";
 
-// Animation utilities - Public API
 export {
   calculateDismissDuration,
   combineTranslateWithAnimation,
@@ -27,7 +25,6 @@ export {
   waitForAnimations,
 } from "./utils/animations";
 
-// Lifecycle utilities
 export { BeaconManager } from "./utils/BeaconManager";
 export { PositionTracker } from "./utils/PositionTracker";
 
