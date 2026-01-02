@@ -25,7 +25,7 @@ export function renderTriggerComponent(
     position: Position;
     isOpen: boolean;
     togglePopover: () => void;
-  },
+  }
 ): ReactElement | null {
   if (!triggerSource) return null;
 
@@ -54,7 +54,7 @@ export function renderPopoverComponent(
     hidePopover: () => void;
     handlePopoverRef: (node: HTMLDivElement | null) => void;
     popoverId: string;
-  },
+  }
 ): ReactElement {
   let element: ReactElement;
 
@@ -73,6 +73,7 @@ export function renderPopoverComponent(
   }
 
   return cloneElement(element, {
+    // @ts-expect-error - cloneElement ref typing doesn't handle callback refs properly
     ref: props.handlePopoverRef,
     id: props.popoverId,
     popover: "auto",
