@@ -1,0 +1,56 @@
+name: Preview Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Preview tag name (e.g., next, alpha, beta)"
+        required: false
+        default: "next"
+        type: string
+
+env:
+  CI: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  preview:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - name: Checkout code repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Biome checks
+        run: pnpm check
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Create snapshot version
+        run: pnpm exec changeset version --snapshot ${{ inputs.tag }}
+
+      - name: Publish snapshot
+        run: pnpm exec changeset publish --tag ${{ inputs.tag }} --no-git-tag
+        # No NPM_TOKEN env var needed - using Trusted Publishers
+
+      - name: Output published versions
+        run: |
+          echo "📦 Published preview packages with tag: ${{ inputs.tag }}"
