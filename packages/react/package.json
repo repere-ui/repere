@@ -52,5 +52,8 @@
     "type": "git",
     "url": "https://github.com/repere-ui/repere",
     "directory": "packages/react"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
