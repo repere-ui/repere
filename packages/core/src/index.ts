@@ -14,7 +14,7 @@ export type {
 } from "./types/beacon";
 export type { Page, RepereConfig } from "./types/config";
 export { Position } from "./types/position";
-export type { BeaconStore } from "./types/store";
+export type { BeaconState, BeaconStore } from "./types/store";
 
 export {
   calculateDismissDuration,
