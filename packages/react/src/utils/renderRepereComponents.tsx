@@ -25,7 +25,7 @@ export function renderTriggerComponent(
     position: Position;
     isOpen: boolean;
     togglePopover: () => void;
-  }
+  },
 ): ReactElement | null {
   if (!triggerSource) return null;
 
@@ -54,7 +54,7 @@ export function renderPopoverComponent(
     hidePopover: () => void;
     handlePopoverRef: (node: HTMLDivElement | null) => void;
     popoverId: string;
-  }
+  },
 ): ReactElement {
   let element: ReactElement;
 

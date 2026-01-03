@@ -12,7 +12,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === "style.css") return "styles.css";
+          if (assetInfo.name?.endsWith(".css")) return "styles.css";
           return assetInfo.name ?? "assets/[name][extname]";
         },
       },
