@@ -7,8 +7,9 @@ on:
   workflow_dispatch:
 
 permissions:
+  contents: write
+  pull-requests: write
   id-token: write
-  contents: read
 
 env:
   CI: true
@@ -47,5 +48,6 @@ jobs:
           commit: "chore: update versions"
           title: "chore: update versions"
           publish: pnpm ci:publish
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
