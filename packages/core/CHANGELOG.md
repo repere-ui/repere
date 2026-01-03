@@ -1,5 +1,11 @@
 # @repere/core
 
+## 0.0.4
+
+### Patch Changes
+
+- d209192: Add missing BeaconState export
+
 ## 0.0.3
 
 ### Patch Changes
