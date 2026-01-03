@@ -1,3 +1,4 @@
+import { copyFileSync } from "node:fs";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
@@ -10,6 +11,15 @@ export default defineConfig({
       outDir: "dist",
       tsconfigPath: "./tsconfig.json",
     }),
+    {
+      name: "copy-core-styles",
+      closeBundle() {
+        copyFileSync(
+          "node_modules/@repere/core/dist/styles.css",
+          "dist/styles.css"
+        );
+      },
+    },
   ],
   build: {
     lib: {
@@ -20,7 +30,6 @@ export default defineConfig({
     },
     rollupOptions: {
       external: (id) => {
-        // Don't bundle anything that's a dependency
         return (
           id.startsWith("react") || // Catches react, react-dom, react-dom/client, react/jsx-runtime
           id.startsWith("motion") // Catches motion, motion/react, etc
