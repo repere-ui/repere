@@ -1,5 +1,11 @@
 # @repere/core
 
+## 0.0.3
+
+### Patch Changes
+
+- 69ad75d: Re-add exported dist styles
+
 ## 0.0.2
 
 ### Patch Changes
