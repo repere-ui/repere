@@ -1,5 +1,11 @@
 # @repere/react
 
+## 0.1.1
+
+### Patch Changes
+
+- b17b405: Export @repere/core types, Animation and Position enums
+
 ## 0.1.0
 
 ### Minor Changes
