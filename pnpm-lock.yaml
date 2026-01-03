@@ -28,10 +28,11 @@ importers:
         version: 4.5.4(rollup@4.54.0)(typescript@5.9.3)(vite@7.3.0)
 
   packages/react:
-    devDependencies:
+    dependencies:
       '@repere/core':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.7
