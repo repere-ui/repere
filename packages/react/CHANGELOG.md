@@ -1,5 +1,15 @@
 # @repere/react
 
+## 0.1.0
+
+### Minor Changes
+
+- 81ee3d2: @repere/core is no longer a peerDependency and is now a dependency of @repere/react
+
+### Patch Changes
+
+- 81ee3d2: fix deprecated assetinfo names key in vite.config
+
 ## 0.0.3
 
 ### Patch Changes
