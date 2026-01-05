@@ -34,7 +34,7 @@ export function RepereProvider({
   const [isDismissing, setIsDismissing] = useState(false);
 
   // Resolve configuration
-  const { position, zIndex, offset, popoverPosition, popoverOffset } =
+  const { position, zIndex, offset, delay, popoverPosition, popoverOffset } =
     resolveBeaconConfig(beacon, config);
 
   // Calculate position
@@ -43,6 +43,7 @@ export function RepereProvider({
     position,
     offset,
     zIndex,
+    delay,
     enabled: true,
     debug,
   });
@@ -108,7 +109,9 @@ export function RepereProvider({
   if (!calculatedPosition || !targetElement) {
     if (debug) {
       console.warn(
-        `[Repere] ${beacon.id} waiting for target element: position=${!!calculatedPosition}, element=${!!targetElement}`,
+        `[Repere] ${
+          beacon.id
+        } waiting for target element: position=${!!calculatedPosition}, element=${!!targetElement}`,
       );
     }
     return null;

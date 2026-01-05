@@ -10,6 +10,8 @@ export function resolveBeaconConfig(beacon: Beacon, config: RepereReactConfig) {
 
   const offset: Offset | undefined = beacon.trigger?.offset;
 
+  const delay = beacon.trigger?.delay ?? config.trigger?.delay;
+
   const popoverPosition =
     beacon.popover?.position || config.popover?.position || position;
 
@@ -20,6 +22,7 @@ export function resolveBeaconConfig(beacon: Beacon, config: RepereReactConfig) {
     position,
     zIndex,
     offset,
+    delay,
     popoverPosition,
     popoverOffset,
   };

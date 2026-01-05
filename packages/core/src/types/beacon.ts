@@ -12,6 +12,12 @@ export interface TriggerConfig<TNode = unknown> {
   zIndex?: number;
   animations?: TriggerAnimations;
   component?: TNode;
+  /**
+   * Delay in milliseconds before calculating the beacon position.
+   * Useful when the target element has entrance animations that affect its position.
+   * @default 0
+   */
+  delay?: number;
 }
 
 export interface PopoverConfig<TNode = unknown> {

@@ -16,7 +16,7 @@ export default defineConfig({
       closeBundle() {
         copyFileSync(
           "node_modules/@repere/core/dist/styles.css",
-          "dist/styles.css"
+          "dist/styles.css",
         );
       },
     },

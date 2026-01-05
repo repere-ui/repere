@@ -11,8 +11,11 @@ interface TrackedElement {
   position: Position;
   offset?: Offset;
   zIndex: number;
+  delay?: number;
   callbacks: Set<PositionCallback>;
   element: HTMLElement | null;
+  hasInitialUpdate: boolean;
+  delayTimeoutId?: ReturnType<typeof setTimeout>; // Track timeout for cleanup
 }
 
 /**
@@ -41,6 +44,7 @@ export class PositionTracker {
     options: {
       offset?: Offset;
       zIndex?: number;
+      delay?: number;
     } = {},
   ): () => void {
     const key = selector;
@@ -51,8 +55,10 @@ export class PositionTracker {
         position,
         offset: options.offset,
         zIndex: options.zIndex ?? 9999,
+        delay: options.delay,
         callbacks: new Set(),
         element: null,
+        hasInitialUpdate: false,
       });
     }
 
@@ -64,8 +70,8 @@ export class PositionTracker {
       this.startListening();
     }
 
-    // Calculate initial position
-    this.updatePosition(key);
+    // Calculate initial position (with delay if specified)
+    this.scheduleInitialUpdate(key);
 
     // Return unsubscribe function
     return () => {
@@ -75,6 +81,12 @@ export class PositionTracker {
 
         // Clean up if no more callbacks
         if (tracked.callbacks.size === 0) {
+          // Clear any pending timeout before removing
+          if (tracked.delayTimeoutId !== undefined) {
+            clearTimeout(tracked.delayTimeoutId);
+            tracked.delayTimeoutId = undefined;
+          }
+
           this.tracked.delete(key);
 
           // Stop listeners if no more tracked elements
@@ -84,6 +96,42 @@ export class PositionTracker {
         }
       }
     };
+  }
+
+  private scheduleInitialUpdate(key: string) {
+    const tracked = this.tracked.get(key);
+    if (!tracked) return;
+
+    if (!tracked.hasInitialUpdate && tracked.delay && tracked.delay > 0) {
+      // Mark as having an initial update scheduled
+      tracked.hasInitialUpdate = true;
+
+      if (this.debug) {
+        console.log(
+          `[PositionTracker] Delaying initial position calculation for ${key} by ${tracked.delay}ms`,
+        );
+      }
+
+      // Schedule the update after the delay and store the timeout ID
+      tracked.delayTimeoutId = setTimeout(() => {
+        if (this.debug) {
+          console.log(
+            `[PositionTracker] Calculating position for ${key} after delay`,
+          );
+        }
+        // Clear the timeout ID since it has completed
+        if (tracked.delayTimeoutId !== undefined) {
+          tracked.delayTimeoutId = undefined;
+        }
+        this.updatePosition(key);
+      }, tracked.delay);
+    } else {
+      // No delay, update immediately
+      if (!tracked.hasInitialUpdate) {
+        tracked.hasInitialUpdate = true;
+      }
+      this.updatePosition(key);
+    }
   }
 
   private updatePosition(key: string) {
@@ -182,6 +230,14 @@ export class PositionTracker {
    * Clean up all listeners and subscriptions
    */
   destroy() {
+    // Clear all pending timeouts
+    for (const [, tracked] of this.tracked) {
+      if (tracked.delayTimeoutId !== undefined) {
+        clearTimeout(tracked.delayTimeoutId);
+        tracked.delayTimeoutId = undefined;
+      }
+    }
+
     this.stopListening();
     this.tracked.clear();
   }

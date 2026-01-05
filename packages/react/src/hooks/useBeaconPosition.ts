@@ -7,6 +7,7 @@ interface UseBeaconPositionParams {
   position: Position;
   offset?: Offset;
   zIndex?: number;
+  delay?: number;
   enabled?: boolean;
   debug?: boolean;
 }
@@ -16,6 +17,7 @@ export function useBeaconPosition({
   position,
   offset,
   zIndex = 9999,
+  delay,
   enabled = true,
   debug = false,
 }: UseBeaconPositionParams) {
@@ -35,11 +37,11 @@ export function useBeaconPosition({
       targetSelector,
       position,
       setCalculatedPosition,
-      { offset, zIndex },
+      { offset, zIndex, delay },
     );
 
     return unsubscribe;
-  }, [tracker, targetSelector, position, offset, zIndex, enabled]);
+  }, [tracker, targetSelector, position, offset, zIndex, delay, enabled]);
 
   // Clean up tracker on unmount
   useEffect(() => {
