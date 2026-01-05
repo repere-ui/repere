@@ -1,5 +1,12 @@
 # @repere/react
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [cf01900]
+  - @repere/core@0.1.2
+
 ## 0.2.1
 
 ### Patch Changes
