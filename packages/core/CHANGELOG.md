@@ -1,5 +1,11 @@
 # @repere/core
 
+## 0.1.2
+
+### Patch Changes
+
+- cf01900: When navigating between pages, the trigger callbacks were ignoring the delay. This patch fixes this behaviour.
+
 ## 0.1.1
 
 ### Patch Changes
