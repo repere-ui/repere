@@ -1,5 +1,13 @@
 # @repere/core
 
+## 0.1.0
+
+### Minor Changes
+
+- 7a54131: Add a `delay` API to trigger positioning.
+  This is mainly for cases where the trigger’s selector element is animating, which causes miscalculation of the trigger position.
+  Previously, the trigger position could be calculated while the selector was still transitioning.
+
 ## 0.0.4
 
 ### Patch Changes
