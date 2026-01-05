@@ -1,5 +1,11 @@
 # @repere/core
 
+## 0.1.1
+
+### Patch Changes
+
+- 62615b2: Track delays per callback so anytime we refresh the page, delays will be respected.
+
 ## 0.1.0
 
 ### Minor Changes
