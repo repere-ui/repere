@@ -207,8 +207,11 @@ export class PositionTracker {
         console.log(`[PositionTracker] Element not found: ${tracked.selector}`);
       }
       tracked.element = null;
-      for (const [callback] of tracked.callbacks) {
-        callback(null);
+      // Only notify callbacks that have completed their initial delay
+      for (const [callback, info] of tracked.callbacks) {
+        if (!info.needsInitialDelay) {
+          callback(null);
+        }
       }
       return;
     }
@@ -234,8 +237,11 @@ export class PositionTracker {
       );
     }
 
-    for (const [callback] of tracked.callbacks) {
-      callback(calculatedPosition);
+    // Only update callbacks that have completed their initial delay
+    for (const [callback, info] of tracked.callbacks) {
+      if (!info.needsInitialDelay) {
+        callback(calculatedPosition);
+      }
     }
   }
 
