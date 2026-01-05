@@ -6,16 +6,20 @@ export type PositionCallback = (
   position: CalculatedBeaconPosition | null,
 ) => void;
 
+interface CallbackInfo {
+  callback: PositionCallback;
+  needsInitialDelay: boolean;
+}
+
 interface TrackedElement {
   selector: string;
   position: Position;
   offset?: Offset;
   zIndex: number;
   delay?: number;
-  callbacks: Set<PositionCallback>;
+  callbacks: Map<PositionCallback, CallbackInfo>;
   element: HTMLElement | null;
-  hasInitialUpdate: boolean;
-  delayTimeoutId?: ReturnType<typeof setTimeout>; // Track timeout for cleanup
+  delayTimeoutIds: Map<PositionCallback, ReturnType<typeof setTimeout>>; // Track per-callback timeouts
 }
 
 /**
@@ -56,36 +60,49 @@ export class PositionTracker {
         offset: options.offset,
         zIndex: options.zIndex ?? 9999,
         delay: options.delay,
-        callbacks: new Set(),
+        callbacks: new Map(),
         element: null,
-        hasInitialUpdate: false,
+        delayTimeoutIds: new Map(),
       });
     }
 
     const tracked = this.tracked.get(key);
-    tracked?.callbacks.add(callback);
+    if (!tracked) return () => {};
+
+    // Add callback with delay flag
+    tracked.callbacks.set(callback, {
+      callback,
+      needsInitialDelay: (options.delay ?? 0) > 0,
+    });
 
     // Start listeners if this is the first subscription
     if (this.tracked.size === 1) {
       this.startListening();
     }
 
-    // Calculate initial position (with delay if specified)
-    this.scheduleInitialUpdate(key);
+    // Calculate initial position (with delay if specified for this callback)
+    this.scheduleInitialUpdate(key, callback);
 
     // Return unsubscribe function
     return () => {
       const tracked = this.tracked.get(key);
       if (tracked) {
+        // Clear any pending timeout for this specific callback
+        const timeoutId = tracked.delayTimeoutIds.get(callback);
+        if (timeoutId !== undefined) {
+          clearTimeout(timeoutId);
+          tracked.delayTimeoutIds.delete(callback);
+        }
+
         tracked.callbacks.delete(callback);
 
         // Clean up if no more callbacks
         if (tracked.callbacks.size === 0) {
-          // Clear any pending timeout before removing
-          if (tracked.delayTimeoutId !== undefined) {
-            clearTimeout(tracked.delayTimeoutId);
-            tracked.delayTimeoutId = undefined;
+          // Clear all remaining timeouts
+          for (const [, timeoutId] of tracked.delayTimeoutIds) {
+            clearTimeout(timeoutId);
           }
+          tracked.delayTimeoutIds.clear();
 
           this.tracked.delete(key);
 
@@ -98,40 +115,85 @@ export class PositionTracker {
     };
   }
 
-  private scheduleInitialUpdate(key: string) {
+  private scheduleInitialUpdate(key: string, callback: PositionCallback) {
     const tracked = this.tracked.get(key);
     if (!tracked) return;
 
-    if (!tracked.hasInitialUpdate && tracked.delay && tracked.delay > 0) {
-      // Mark as having an initial update scheduled
-      tracked.hasInitialUpdate = true;
+    const callbackInfo = tracked.callbacks.get(callback);
+    if (!callbackInfo) return;
 
+    if (callbackInfo.needsInitialDelay && tracked.delay && tracked.delay > 0) {
       if (this.debug) {
         console.log(
           `[PositionTracker] Delaying initial position calculation for ${key} by ${tracked.delay}ms`,
         );
       }
 
-      // Schedule the update after the delay and store the timeout ID
-      tracked.delayTimeoutId = setTimeout(() => {
+      // Schedule the update after the delay for this specific callback
+      const timeoutId = setTimeout(() => {
         if (this.debug) {
           console.log(
             `[PositionTracker] Calculating position for ${key} after delay`,
           );
         }
-        // Clear the timeout ID since it has completed
-        if (tracked.delayTimeoutId !== undefined) {
-          tracked.delayTimeoutId = undefined;
+
+        // Mark this callback as no longer needing delay
+        const info = tracked.callbacks.get(callback);
+        if (info) {
+          info.needsInitialDelay = false;
         }
-        this.updatePosition(key);
+
+        // Clear the timeout ID
+        tracked.delayTimeoutIds.delete(callback);
+
+        // Update position for this callback
+        this.updatePositionForCallback(key, callback);
       }, tracked.delay);
+
+      tracked.delayTimeoutIds.set(callback, timeoutId);
     } else {
       // No delay, update immediately
-      if (!tracked.hasInitialUpdate) {
-        tracked.hasInitialUpdate = true;
-      }
-      this.updatePosition(key);
+      this.updatePositionForCallback(key, callback);
     }
+  }
+
+  private updatePositionForCallback(key: string, callback: PositionCallback) {
+    const tracked = this.tracked.get(key);
+    if (!tracked) return;
+
+    const element = document.querySelector(tracked.selector) as HTMLElement;
+
+    if (!element) {
+      if (this.debug) {
+        console.log(`[PositionTracker] Element not found: ${tracked.selector}`);
+      }
+      tracked.element = null;
+      callback(null);
+      return;
+    }
+
+    tracked.element = element;
+    const rect = element.getBoundingClientRect();
+    const coords = calculateBeaconPosition(
+      rect,
+      tracked.position,
+      tracked.offset,
+    );
+
+    const calculatedPosition: CalculatedBeaconPosition = {
+      ...coords,
+      position: "fixed" as const,
+      zIndex: tracked.zIndex,
+    };
+
+    if (this.debug) {
+      console.log(
+        `[PositionTracker] Updated position for ${tracked.selector}:`,
+        calculatedPosition,
+      );
+    }
+
+    callback(calculatedPosition);
   }
 
   private updatePosition(key: string) {
@@ -145,8 +207,8 @@ export class PositionTracker {
         console.log(`[PositionTracker] Element not found: ${tracked.selector}`);
       }
       tracked.element = null;
-      for (const cb of tracked.callbacks) {
-        cb(null);
+      for (const [callback] of tracked.callbacks) {
+        callback(null);
       }
       return;
     }
@@ -172,8 +234,8 @@ export class PositionTracker {
       );
     }
 
-    for (const cb of tracked.callbacks) {
-      cb(calculatedPosition);
+    for (const [callback] of tracked.callbacks) {
+      callback(calculatedPosition);
     }
   }
 
@@ -232,10 +294,10 @@ export class PositionTracker {
   destroy() {
     // Clear all pending timeouts
     for (const [, tracked] of this.tracked) {
-      if (tracked.delayTimeoutId !== undefined) {
-        clearTimeout(tracked.delayTimeoutId);
-        tracked.delayTimeoutId = undefined;
+      for (const [, timeoutId] of tracked.delayTimeoutIds) {
+        clearTimeout(timeoutId);
       }
+      tracked.delayTimeoutIds.clear();
     }
 
     this.stopListening();
