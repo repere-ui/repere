@@ -1,5 +1,13 @@
 # @repere/react
 
+## 0.2.1
+
+### Patch Changes
+
+- 4144719: Move @repere/core from devDependency to dependency list
+- Updated dependencies [62615b2]
+  - @repere/core@0.1.1
+
 ## 0.2.0
 
 ### Minor Changes
