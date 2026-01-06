@@ -1,13 +1,13 @@
-import type { CalculatedBeaconPosition } from "./beacon";
-import type { Position } from "./position";
+import type { AnchorPoint } from "./anchors";
+import type { CalculatedBeaconAnchorPoint } from "./beacon";
 
 /**
  * Base props that trigger components receive (framework-agnostic)
  */
 export interface BaseTriggerProps {
   beaconId: string;
-  position: Position;
-  calculatedPosition: CalculatedBeaconPosition;
+  anchorPoint: AnchorPoint;
+  calculatedAnchor: CalculatedBeaconAnchorPoint;
   isOpen: boolean;
   isDismissing: boolean;
   popoverId?: string;
@@ -18,7 +18,7 @@ export interface BaseTriggerProps {
  */
 export interface BasePopoverProps {
   beaconId: string;
-  position: Position;
+  anchorPoint: AnchorPoint;
   isOpen: boolean;
   isDismissing?: boolean;
   popoverId?: string;

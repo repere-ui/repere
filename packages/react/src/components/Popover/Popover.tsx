@@ -1,4 +1,4 @@
-import type { Beacon, Position } from "@repere/core";
+import type { AnchorPoint, Beacon } from "@repere/core";
 import { getPopoverAnimationStyles } from "@repere/core";
 import {
   forwardRef,
@@ -16,13 +16,13 @@ export interface PopoverProps
   disableAnimation?: boolean;
   // Internal props passed by RepereProvider that should not reach the DOM
   beacon?: Beacon;
-  position?: Position;
+  anchorPoint?: AnchorPoint;
   onDismiss?: () => void;
   onClose?: () => void;
 }
 
-const Popover = forwardRef<HTMLDivElement, PopoverProps>(
-  (
+export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
+  function Popover(
     {
       children,
       style: userStyle,
@@ -30,28 +30,28 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       disableAnimation,
       // Destructure and discard internal props so they don't spread to DOM
       beacon: _beacon,
-      position: _position,
+      anchorPoint: _anchorPoint,
       onDismiss: _onDismiss,
       onClose: _onClose,
       ...domProps
     },
     ref,
-  ) => {
+  ) {
     const {
       beaconId,
+      popoverId,
       popoverOpenAnimation,
       popoverCloseAnimation,
-      popoverPosition,
+      popoverAnchorPoint,
       popoverOffset,
     } = useRepereContext();
 
-    // Combine refs
     const internalRef = useCallback(
       (node: HTMLDivElement | null) => {
         if (typeof ref === "function") {
           ref(node);
         } else if (ref) {
-          (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+          ref.current = node;
         }
       },
       [ref],
@@ -75,10 +75,11 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
     return (
       <div
         ref={internalRef}
+        id={popoverId}
         role="dialog"
         aria-labelledby={`repere-popover-${beaconId}`}
         data-repere-popover=""
-        data-position={popoverPosition}
+        data-anchor-point={popoverAnchorPoint}
         popover={popover}
         {...domProps}
         style={style}
@@ -88,6 +89,3 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
     );
   },
 );
-
-Popover.displayName = "ReperePopover";
-export default Popover;

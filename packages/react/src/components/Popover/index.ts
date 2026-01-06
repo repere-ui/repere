@@ -1,4 +1,4 @@
-import Popover from "./Popover";
+import { Popover } from "./Popover";
 import PopoverAcknowledgeButton from "./PopoverAcknowledgeButton";
 import PopoverCloseButton from "./PopoverCloseButton";
 import PopoverContent from "./PopoverContent";

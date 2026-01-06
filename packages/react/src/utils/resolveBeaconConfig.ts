@@ -1,10 +1,17 @@
-import type { Beacon, Offset, Position } from "@repere/core";
-import { DEFAULT_POSITION } from "@repere/core";
+import type {
+  AnchorPoint,
+  Beacon,
+  Offset,
+  PositioningStrategy,
+} from "@repere/core";
+import { DEFAULT_ANCHOR_POINT } from "@repere/core";
 import type { RepereReactConfig } from "../types";
 
 export function resolveBeaconConfig(beacon: Beacon, config: RepereReactConfig) {
-  const position: Position =
-    beacon.trigger?.position || config.trigger?.position || DEFAULT_POSITION;
+  const anchorPoint: AnchorPoint =
+    beacon.trigger?.anchorPoint ||
+    config.trigger?.anchorPoint ||
+    DEFAULT_ANCHOR_POINT;
 
   const zIndex = beacon.trigger?.zIndex || config.trigger?.zIndex || 9999;
 
@@ -12,18 +19,22 @@ export function resolveBeaconConfig(beacon: Beacon, config: RepereReactConfig) {
 
   const delay = beacon.trigger?.delay ?? config.trigger?.delay;
 
-  const popoverPosition =
-    beacon.popover?.position || config.popover?.position || position;
+  const positioningStrategy: PositioningStrategy | undefined =
+    beacon.trigger?.positioningStrategy ?? config.trigger?.positioningStrategy;
+
+  const popoverAnchorPoint =
+    beacon.popover?.anchorPoint || config.popover?.anchorPoint || anchorPoint;
 
   const popoverOffset = beacon.popover?.offset ||
     config.popover?.offset || { x: 0, y: 0 };
 
   return {
-    position,
+    anchorPoint,
     zIndex,
     offset,
     delay,
-    popoverPosition,
+    positioningStrategy,
+    popoverAnchorPoint,
     popoverOffset,
   };
 }

@@ -1,37 +1,44 @@
-import type { CalculatedBeaconPosition, Offset } from "../types/beacon";
-import type { Position } from "../types/position";
-import { calculateBeaconPosition } from "./positioning";
+import type { AnchorPoint } from "../types/anchors";
+import type {
+  CalculatedBeaconAnchorPoint,
+  Offset,
+  PositioningStrategy,
+} from "../types/beacon";
+import { PositioningStrategy as PS } from "../types/beacon";
+import { calculateAnchorPointCoords } from "./positioning";
 
-export type PositionCallback = (
-  position: CalculatedBeaconPosition | null,
+export type AnchorPointCallback = (
+  anchorPoint: CalculatedBeaconAnchorPoint | null,
 ) => void;
 
 interface CallbackInfo {
-  callback: PositionCallback;
+  callback: AnchorPointCallback;
   needsInitialDelay: boolean;
 }
 
 interface TrackedElement {
   selector: string;
-  position: Position;
+  anchorPoint: AnchorPoint;
   offset?: Offset;
   zIndex: number;
   delay?: number;
-  callbacks: Map<PositionCallback, CallbackInfo>;
+  positioningStrategy: PositioningStrategy;
+  callbacks: Map<AnchorPointCallback, CallbackInfo>;
   element: HTMLElement | null;
-  delayTimeoutIds: Map<PositionCallback, ReturnType<typeof setTimeout>>; // Track per-callback timeouts
+  delayTimeoutIds: Map<AnchorPointCallback, ReturnType<typeof setTimeout>>;
 }
 
 /**
- * Framework-agnostic position tracker for beacon elements
- * Tracks element positions and notifies subscribers of changes
+ * Framework-agnostic anchor point tracker for beacon elements
+ * Tracks element anchor points and notifies subscribers of changes
  */
-export class PositionTracker {
+export class AnchorPointTracker {
   private tracked = new Map<string, TrackedElement>();
   private scrollListener: (() => void) | null = null;
   private resizeListener: (() => void) | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private mutationObserver: MutationObserver | null = null;
+  private updateScheduled = false;
   private debug = false;
 
   constructor(debug = false) {
@@ -39,27 +46,114 @@ export class PositionTracker {
   }
 
   /**
-   * Subscribe to position updates for an element
+   * Subscribe to anchor point updates for an element
    */
   subscribe(
     selector: string,
-    position: Position,
-    callback: PositionCallback,
+    anchorPoint: AnchorPoint,
+    callback: AnchorPointCallback,
     options: {
       offset?: Offset;
       zIndex?: number;
       delay?: number;
+      positioningStrategy?: PositioningStrategy;
     } = {},
+  ): () => void {
+    const strategy = options.positioningStrategy ?? PS.Absolute;
+
+    // Delegate to appropriate strategy
+    if (strategy === PS.Absolute) {
+      return this.subscribeAbsolute(selector, anchorPoint, callback, options);
+    } else {
+      return this.subscribeFixed(selector, anchorPoint, callback, options);
+    }
+  }
+
+  /**
+   * Subscribe with absolute positioning strategy (no tracking)
+   */
+  private subscribeAbsolute(
+    selector: string,
+    anchorPoint: AnchorPoint,
+    callback: AnchorPointCallback,
+    options: {
+      offset?: Offset;
+      zIndex?: number;
+      delay?: number;
+    },
+  ): () => void {
+    const { offset, zIndex = 9999, delay = 0 } = options;
+
+    const calculateAndNotify = () => {
+      const element = document.querySelector(selector) as HTMLElement;
+
+      if (!element) {
+        if (this.debug) {
+          console.log(
+            `[AnchorPointTracker:Absolute] Element not found: ${selector}`,
+          );
+        }
+        callback(null);
+        return;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const coords = calculateAnchorPointCoords(rect, anchorPoint, offset);
+
+      const calculatedAnchorPoint: CalculatedBeaconAnchorPoint = {
+        ...coords,
+        position: "absolute" as const,
+        zIndex,
+      };
+
+      if (this.debug) {
+        console.log(
+          `[AnchorPointTracker:Absolute] Calculated anchor point for ${selector}:`,
+          calculatedAnchorPoint,
+        );
+      }
+
+      callback(calculatedAnchorPoint);
+    };
+
+    // Calculate with optional delay
+    if (delay > 0) {
+      if (this.debug) {
+        console.log(
+          `[AnchorPointTracker:Absolute] Delaying calculation for ${selector} by ${delay}ms`,
+        );
+      }
+      const timeoutId = setTimeout(calculateAndNotify, delay);
+      return () => clearTimeout(timeoutId);
+    } else {
+      calculateAndNotify();
+      return () => {}; // No cleanup needed for absolute strategy
+    }
+  }
+
+  /**
+   * Subscribe with fixed positioning strategy (with tracking)
+   */
+  private subscribeFixed(
+    selector: string,
+    anchorPoint: AnchorPoint,
+    callback: AnchorPointCallback,
+    options: {
+      offset?: Offset;
+      zIndex?: number;
+      delay?: number;
+    },
   ): () => void {
     const key = selector;
 
     if (!this.tracked.has(key)) {
       this.tracked.set(key, {
         selector,
-        position,
+        anchorPoint,
         offset: options.offset,
         zIndex: options.zIndex ?? 9999,
         delay: options.delay,
+        positioningStrategy: PS.Fixed,
         callbacks: new Map(),
         element: null,
         delayTimeoutIds: new Map(),
@@ -80,7 +174,7 @@ export class PositionTracker {
       this.startListening();
     }
 
-    // Calculate initial position (with delay if specified for this callback)
+    // Calculate initial anchor point (with delay if specified for this callback)
     this.scheduleInitialUpdate(key, callback);
 
     // Return unsubscribe function
@@ -115,7 +209,7 @@ export class PositionTracker {
     };
   }
 
-  private scheduleInitialUpdate(key: string, callback: PositionCallback) {
+  private scheduleInitialUpdate(key: string, callback: AnchorPointCallback) {
     const tracked = this.tracked.get(key);
     if (!tracked) return;
 
@@ -125,7 +219,7 @@ export class PositionTracker {
     if (callbackInfo.needsInitialDelay && tracked.delay && tracked.delay > 0) {
       if (this.debug) {
         console.log(
-          `[PositionTracker] Delaying initial position calculation for ${key} by ${tracked.delay}ms`,
+          `[AnchorPointTracker:Fixed] Delaying initial anchor point calculation for ${key} by ${tracked.delay}ms`,
         );
       }
 
@@ -133,7 +227,7 @@ export class PositionTracker {
       const timeoutId = setTimeout(() => {
         if (this.debug) {
           console.log(
-            `[PositionTracker] Calculating position for ${key} after delay`,
+            `[AnchorPointTracker:Fixed] Calculating anchor point for ${key} after delay`,
           );
         }
 
@@ -146,18 +240,21 @@ export class PositionTracker {
         // Clear the timeout ID
         tracked.delayTimeoutIds.delete(callback);
 
-        // Update position for this callback
-        this.updatePositionForCallback(key, callback);
+        // Update anchor point for this callback
+        this.updateAnchorPointForCallback(key, callback);
       }, tracked.delay);
 
       tracked.delayTimeoutIds.set(callback, timeoutId);
     } else {
       // No delay, update immediately
-      this.updatePositionForCallback(key, callback);
+      this.updateAnchorPointForCallback(key, callback);
     }
   }
 
-  private updatePositionForCallback(key: string, callback: PositionCallback) {
+  private updateAnchorPointForCallback(
+    key: string,
+    callback: AnchorPointCallback,
+  ) {
     const tracked = this.tracked.get(key);
     if (!tracked) return;
 
@@ -165,7 +262,9 @@ export class PositionTracker {
 
     if (!element) {
       if (this.debug) {
-        console.log(`[PositionTracker] Element not found: ${tracked.selector}`);
+        console.log(
+          `[AnchorPointTracker:Fixed] Element not found: ${tracked.selector}`,
+        );
       }
       tracked.element = null;
       callback(null);
@@ -174,13 +273,13 @@ export class PositionTracker {
 
     tracked.element = element;
     const rect = element.getBoundingClientRect();
-    const coords = calculateBeaconPosition(
+    const coords = calculateAnchorPointCoords(
       rect,
-      tracked.position,
+      tracked.anchorPoint,
       tracked.offset,
     );
 
-    const calculatedPosition: CalculatedBeaconPosition = {
+    const calculatedAnchorPoint: CalculatedBeaconAnchorPoint = {
       ...coords,
       position: "fixed" as const,
       zIndex: tracked.zIndex,
@@ -188,15 +287,15 @@ export class PositionTracker {
 
     if (this.debug) {
       console.log(
-        `[PositionTracker] Updated position for ${tracked.selector}:`,
-        calculatedPosition,
+        `[AnchorPointTracker:Fixed] Updated anchor point for ${tracked.selector}:`,
+        calculatedAnchorPoint,
       );
     }
 
-    callback(calculatedPosition);
+    callback(calculatedAnchorPoint);
   }
 
-  private updatePosition(key: string) {
+  private updateAnchorPoint(key: string) {
     const tracked = this.tracked.get(key);
     if (!tracked) return;
 
@@ -204,7 +303,9 @@ export class PositionTracker {
 
     if (!element) {
       if (this.debug) {
-        console.log(`[PositionTracker] Element not found: ${tracked.selector}`);
+        console.log(
+          `[AnchorPointTracker:Fixed] Element not found: ${tracked.selector}`,
+        );
       }
       tracked.element = null;
       // Only notify callbacks that have completed their initial delay
@@ -218,13 +319,13 @@ export class PositionTracker {
 
     tracked.element = element;
     const rect = element.getBoundingClientRect();
-    const coords = calculateBeaconPosition(
+    const coords = calculateAnchorPointCoords(
       rect,
-      tracked.position,
+      tracked.anchorPoint,
       tracked.offset,
     );
 
-    const calculatedPosition: CalculatedBeaconPosition = {
+    const calculatedAnchorPoint: CalculatedBeaconAnchorPoint = {
       ...coords,
       position: "fixed" as const,
       zIndex: tracked.zIndex,
@@ -232,42 +333,52 @@ export class PositionTracker {
 
     if (this.debug) {
       console.log(
-        `[PositionTracker] Updated position for ${tracked.selector}:`,
-        calculatedPosition,
+        `[AnchorPointTracker:Fixed] Updated anchor point for ${tracked.selector}:`,
+        calculatedAnchorPoint,
       );
     }
 
     // Only update callbacks that have completed their initial delay
     for (const [callback, info] of tracked.callbacks) {
       if (!info.needsInitialDelay) {
-        callback(calculatedPosition);
+        callback(calculatedAnchorPoint);
       }
     }
   }
 
-  private updateAllPositions = () => {
+  private scheduleUpdate = () => {
+    if (!this.updateScheduled) {
+      this.updateScheduled = true;
+      requestAnimationFrame(() => {
+        this.updateAllAnchorPointsSync();
+        this.updateScheduled = false;
+      });
+    }
+  };
+
+  private updateAllAnchorPointsSync = () => {
     for (const [key] of this.tracked) {
-      this.updatePosition(key);
+      this.updateAnchorPoint(key);
     }
   };
 
   private startListening() {
-    // Scroll listener
-    this.scrollListener = this.updateAllPositions;
+    // Scroll listener (with RAF batching)
+    this.scrollListener = this.scheduleUpdate;
     window.addEventListener("scroll", this.scrollListener, true);
 
-    // Resize listener
-    this.resizeListener = this.updateAllPositions;
+    // Resize listener (with RAF batching)
+    this.resizeListener = this.scheduleUpdate;
     window.addEventListener("resize", this.resizeListener);
 
     // ResizeObserver for element resize
     if ("ResizeObserver" in window) {
-      this.resizeObserver = new ResizeObserver(this.updateAllPositions);
+      this.resizeObserver = new ResizeObserver(this.scheduleUpdate);
     }
 
     // MutationObserver for DOM changes
     this.mutationObserver = new MutationObserver(() => {
-      this.updateAllPositions();
+      this.scheduleUpdate();
     });
 
     this.mutationObserver.observe(document.body, {

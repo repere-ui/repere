@@ -1,12 +1,15 @@
-import type { BeaconStore } from "@repere/core";
-import { calculateDismissDuration, waitForAnimations } from "@repere/core";
+import {
+  type BeaconStore,
+  calculateDismissDuration,
+  waitForAnimations,
+} from "@repere/core";
 import { useId, useState } from "react";
 import {
   RepereContext,
   type RepereContextValue,
 } from "../context/RepereContext";
 import { useAnimationConfigs } from "../hooks/useAnimationConfigs";
-import { useBeaconPosition } from "../hooks/useBeaconPosition";
+import { useBeaconAnchor } from "../hooks/useBeaconAnchor";
 import { usePopoverState } from "../hooks/usePopoverState";
 import type { ReactBeacon, RepereReactConfig } from "../types";
 import {
@@ -34,16 +37,24 @@ export function RepereProvider({
   const [isDismissing, setIsDismissing] = useState(false);
 
   // Resolve configuration
-  const { position, zIndex, offset, delay, popoverPosition, popoverOffset } =
-    resolveBeaconConfig(beacon, config);
+  const {
+    anchorPoint,
+    zIndex,
+    offset,
+    delay,
+    positioningStrategy,
+    popoverAnchorPoint,
+    popoverOffset,
+  } = resolveBeaconConfig(beacon, config);
 
-  // Calculate position
-  const { calculatedPosition, targetElement } = useBeaconPosition({
+  // Calculate anchor
+  const { calculatedAnchorPoint, targetElement } = useBeaconAnchor({
     targetSelector: beacon.selector,
-    position,
+    anchorPoint,
     offset,
     zIndex,
     delay,
+    positioningStrategy,
     enabled: true,
     debug,
   });
@@ -84,10 +95,10 @@ export function RepereProvider({
   // Context value
   const contextValue: RepereContextValue = {
     beaconId: beacon.id,
-    position,
-    popoverPosition,
+    anchorPoint,
+    popoverAnchorPoint,
     popoverOffset,
-    calculatedPosition,
+    calculatedAnchorPoint,
     isOpen,
     isDismissing,
     toggle: togglePopover,
@@ -106,12 +117,12 @@ export function RepereProvider({
   const popoverSource = beacon.popover.component || config.popover?.component;
 
   // Guard clauses
-  if (!calculatedPosition || !targetElement) {
+  if (!calculatedAnchorPoint || !targetElement) {
     if (debug) {
       console.warn(
         `[Repere] ${
           beacon.id
-        } waiting for target element: position=${!!calculatedPosition}, element=${!!targetElement}`,
+        } waiting for target element: anchor=${!!calculatedAnchorPoint}, element=${!!targetElement}`,
       );
     }
     return null;
@@ -131,14 +142,14 @@ export function RepereProvider({
     <RepereContext.Provider value={contextValue}>
       {renderTriggerComponent(triggerSource, {
         beacon,
-        calculatedPosition,
-        position,
+        calculatedAnchorPoint,
+        anchorPoint,
         isOpen,
         togglePopover,
       })}
       {renderPopoverComponent(popoverSource, {
         beacon,
-        position,
+        anchorPoint,
         handleDismiss,
         hidePopover,
         handlePopoverRef,

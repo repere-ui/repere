@@ -1,44 +1,50 @@
-import type { Beacon, CalculatedBeaconPosition, Position } from "@repere/core";
+import type {
+  AnchorPoint,
+  Beacon,
+  CalculatedBeaconAnchorPoint,
+} from "@repere/core";
 import { cloneElement, isValidElement, type ReactElement } from "react";
 import type { ReactComponent } from "../types";
 
 interface TriggerProps {
   beacon: Beacon<unknown>;
-  style?: CalculatedBeaconPosition;
-  position?: Position;
+  style?: CalculatedBeaconAnchorPoint;
+  anchorPoint?: AnchorPoint;
   isOpen: boolean;
   onClick: () => void;
 }
 
 interface PopoverProps {
   beacon: Beacon<unknown>;
-  position?: Position;
+  anchorPoint?: AnchorPoint;
   onDismiss: () => void;
   onClose: () => void;
 }
 
 export function renderTriggerComponent(
-  triggerSource: ReactComponent | undefined,
+  component: ReactComponent | undefined,
   props: {
     beacon: Beacon;
-    calculatedPosition: CalculatedBeaconPosition;
-    position: Position;
+    calculatedAnchorPoint: CalculatedBeaconAnchorPoint;
+    anchorPoint: AnchorPoint;
     isOpen: boolean;
     togglePopover: () => void;
   },
 ): ReactElement | null {
-  if (!triggerSource) return null;
-
-  if (isValidElement(triggerSource)) {
-    return triggerSource;
+  if (!component) {
+    return null;
   }
 
-  const TriggerComponent = triggerSource as React.ComponentType<TriggerProps>;
+  if (isValidElement(component)) {
+    return cloneElement(component as ReactElement<TriggerProps>, props);
+  }
+
+  const TriggerComponent = component as React.ComponentType<TriggerProps>;
   return (
     <TriggerComponent
       beacon={props.beacon}
-      style={props.calculatedPosition}
-      position={props.position}
+      style={props.calculatedAnchorPoint}
+      anchorPoint={props.anchorPoint}
       isOpen={props.isOpen}
       onClick={props.togglePopover}
     />
@@ -46,36 +52,32 @@ export function renderTriggerComponent(
 }
 
 export function renderPopoverComponent(
-  popoverSource: ReactComponent,
+  component: ReactComponent,
   props: {
     beacon: Beacon;
-    position: Position;
+    anchorPoint: AnchorPoint;
     handleDismiss: () => void;
     hidePopover: () => void;
     handlePopoverRef: (node: HTMLDivElement | null) => void;
     popoverId: string;
   },
 ): ReactElement {
-  let element: ReactElement;
-
-  if (isValidElement(popoverSource)) {
-    element = popoverSource;
-  } else {
-    const PopoverComponent = popoverSource as React.ComponentType<PopoverProps>;
-    element = (
-      <PopoverComponent
-        beacon={props.beacon}
-        position={props.position}
-        onDismiss={props.handleDismiss}
-        onClose={props.hidePopover}
-      />
-    );
+  if (isValidElement(component)) {
+    return cloneElement(component as ReactElement<PopoverProps>, {
+      beacon: props.beacon,
+      anchorPoint: props.anchorPoint,
+      onDismiss: props.handleDismiss,
+      onClose: props.hidePopover,
+    });
   }
 
-  return cloneElement(element, {
-    // @ts-expect-error - cloneElement ref typing doesn't handle callback refs properly
-    ref: props.handlePopoverRef,
-    id: props.popoverId,
-    popover: "auto",
-  });
+  const PopoverComponent = component as React.ComponentType<PopoverProps>;
+  return (
+    <PopoverComponent
+      beacon={props.beacon}
+      anchorPoint={props.anchorPoint}
+      onDismiss={props.handleDismiss}
+      onClose={props.hidePopover}
+    />
+  );
 }

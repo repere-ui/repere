@@ -49,7 +49,7 @@ const RepereTriggerImpl = forwardRef(
     ref?: PolymorphicRef<C>,
   ) => {
     const {
-      calculatedPosition,
+      calculatedAnchorPoint,
       beaconId,
       triggerAnimation,
       triggerDismissAnimation,
@@ -69,13 +69,13 @@ const RepereTriggerImpl = forwardRef(
       return motion.create(Component);
     }, [as, Component]);
 
-    if (!calculatedPosition) return null;
+    if (!calculatedAnchorPoint) return null;
 
     const positionStyle = {
-      position: calculatedPosition.position,
-      top: calculatedPosition.top,
-      left: calculatedPosition.left,
-      zIndex: calculatedPosition.zIndex,
+      position: calculatedAnchorPoint.position,
+      top: calculatedAnchorPoint.top,
+      left: calculatedAnchorPoint.left,
+      zIndex: calculatedAnchorPoint.zIndex,
       pointerEvents: "auto" as const,
       cursor: "pointer",
       anchorName: `--repere-trigger-${beaconId}`,
@@ -105,7 +105,7 @@ const RepereTriggerImpl = forwardRef(
       if (!activeAnimation) return null;
 
       const combinedVariants = combineTranslateWithAnimation(
-        calculatedPosition.translate,
+        calculatedAnchorPoint.translate,
         activeAnimation.variants,
       ) as unknown as Variants;
 
@@ -128,7 +128,7 @@ const RepereTriggerImpl = forwardRef(
         {...commonProps}
         style={{
           ...style,
-          translate: `${calculatedPosition.translate.x} ${calculatedPosition.translate.y}`,
+          translate: `${calculatedAnchorPoint.translate.x} ${calculatedAnchorPoint.translate.y}`,
         }}
       >
         {children}

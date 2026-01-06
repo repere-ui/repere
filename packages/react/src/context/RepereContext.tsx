@@ -1,17 +1,17 @@
 import type {
-  CalculatedBeaconPosition,
+  AnchorPoint,
+  CalculatedBeaconAnchorPoint,
   Offset,
-  Position,
   ResolvedAnimationConfig,
 } from "@repere/core";
 import { createContext, useContext } from "react";
 
 export interface RepereContextValue {
   beaconId: string;
-  position: Position;
-  popoverPosition?: Position;
+  anchorPoint: AnchorPoint;
+  popoverAnchorPoint?: AnchorPoint;
   popoverOffset?: Offset;
-  calculatedPosition: CalculatedBeaconPosition | null;
+  calculatedAnchorPoint: CalculatedBeaconAnchorPoint | null;
   isOpen: boolean;
   isDismissing: boolean;
   toggle: () => void;
@@ -22,15 +22,15 @@ export interface RepereContextValue {
   triggerDismissAnimation: ResolvedAnimationConfig | null;
   popoverOpenAnimation: ResolvedAnimationConfig | null;
   popoverCloseAnimation: ResolvedAnimationConfig | null;
-  popoverId?: string;
+  popoverId: string;
 }
 
 export const RepereContext = createContext<RepereContextValue | null>(null);
 
-export function useRepereContext(): RepereContextValue {
+export function useRepereContext() {
   const context = useContext(RepereContext);
   if (!context) {
-    throw new Error("useRepereContext must be used within a Repere provider.");
+    throw new Error("useRepereContext must be used within RepereProvider");
   }
   return context;
 }

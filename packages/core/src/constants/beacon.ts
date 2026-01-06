@@ -1,3 +1,3 @@
-import { Position } from "../types/position";
+import { AnchorPoint } from "../types/anchors";
 
-export const DEFAULT_POSITION: Position = Position.TopRight;
+export const DEFAULT_ANCHOR_POINT: AnchorPoint = AnchorPoint.TopRight;

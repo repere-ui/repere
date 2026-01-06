@@ -39,56 +39,56 @@
   }
 }
 
-/* Bottom positions */
-[data-repere-popover][data-position="bottom-left"] {
+/* Bottom anchor points */
+[data-repere-popover][data-anchor-point="bottom-left"] {
   top: anchor(bottom);
   left: anchor(left);
   position-try-fallbacks: --bottom-right, --top-left, --top-right;
 }
 
-[data-repere-popover][data-position="bottom-center"] {
+[data-repere-popover][data-anchor-point="bottom-center"] {
   top: anchor(bottom);
   left: anchor(center);
   translate: -50% 0;
   position-try-fallbacks: --bottom-left, --bottom-right, --top-center;
 }
 
-[data-repere-popover][data-position="bottom-right"] {
+[data-repere-popover][data-anchor-point="bottom-right"] {
   top: anchor(bottom);
   right: anchor(right);
   position-try-fallbacks: --bottom-left, --top-right, --top-left;
 }
 
-/* Top positions */
-[data-repere-popover][data-position="top-left"] {
+/* Top anchor points */
+[data-repere-popover][data-anchor-point="top-left"] {
   bottom: anchor(top);
   left: anchor(left);
   position-try-fallbacks: --top-right, --bottom-left, --bottom-right;
 }
 
-[data-repere-popover][data-position="top-center"] {
+[data-repere-popover][data-anchor-point="top-center"] {
   bottom: anchor(top);
   left: anchor(center);
   translate: -50% 0;
   position-try-fallbacks: --top-left, --top-right, --bottom-center;
 }
 
-[data-repere-popover][data-position="top-right"] {
+[data-repere-popover][data-anchor-point="top-right"] {
   bottom: anchor(top);
   right: anchor(right);
   position-try-fallbacks: --top-left, --bottom-right, --bottom-left;
 }
 
-/* Left positions */
-[data-repere-popover][data-position="left-center"]:popover-open {
+/* Left anchor points */
+[data-repere-popover][data-anchor-point="left-center"]:popover-open {
   top: anchor(center);
   right: anchor(left);
   translate: 0 -50%;
   position-try-fallbacks: --right-center, --bottom-center, --top-center;
 }
 
-/* Right positions */
-[data-repere-popover][data-position="right-center"]:popover-open {
+/* Right anchor points */
+[data-repere-popover][data-anchor-point="right-center"]:popover-open {
   top: anchor(center);
   left: anchor(right);
   translate: 0 -50%;
