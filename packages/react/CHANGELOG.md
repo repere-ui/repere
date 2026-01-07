@@ -1,5 +1,23 @@
 # @repere/react
 
+## 0.3.0
+
+### Minor Changes
+
+- c4e5f0c: Update React package to use new positioning semantics from `@repere/core`
+
+  Updated all React components, hooks, and utilities to align with the core package refactoring:
+
+  - `useBeaconPosition` → `useBeaconAnchor` - Renamed hook with updated parameters
+  - All component props updated: `position` → `anchorPoint`, `calculatedPosition` → `calculatedAnchor`
+  - Context values updated to use new naming conventions
+  - CSS attribute updated: `data-position` → `data-anchor-point`
+
+### Patch Changes
+
+- Updated dependencies [c4e5f0c]
+  - @repere/core@0.2.0
+
 ## 0.2.2
 
 ### Patch Changes
