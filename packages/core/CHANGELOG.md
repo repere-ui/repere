@@ -1,5 +1,11 @@
 # @repere/core
 
+## 0.2.1
+
+### Patch Changes
+
+- 02e0c19: Update deps
+
 ## 0.2.0
 
 ### Minor Changes
