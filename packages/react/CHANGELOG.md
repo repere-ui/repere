@@ -1,5 +1,13 @@
 # @repere/react
 
+## 0.3.1
+
+### Patch Changes
+
+- 02e0c19: Update deps
+- Updated dependencies [02e0c19]
+  - @repere/core@0.2.1
+
 ## 0.3.0
 
 ### Minor Changes
