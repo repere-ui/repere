@@ -1,6 +1,5 @@
 version: 2
 updates:
-  # Root dependencies
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -13,27 +12,7 @@ updates:
           - "@biomejs/*"
           - "@changesets/*"
           - "typescript"
-
-  # Core package
-  - package-ecosystem: "npm"
-    directory: "/packages/core"
-    schedule:
-      interval: "weekly"
-      day: saturday
-    open-pull-requests-limit: 5
-    groups:
-      vite:
-        patterns:
-          - "vite*"
-
-  # React package
-  - package-ecosystem: "npm"
-    directory: "/packages/react"
-    schedule:
-      interval: "weekly"
-      day: saturday
-    open-pull-requests-limit: 5
-    groups:
+          - "@types/*"
       react:
         patterns:
           - "react*"
@@ -44,4 +23,3 @@ updates:
           - "@vitejs/*"
     labels:
       - "dependencies"
-      - "react"
