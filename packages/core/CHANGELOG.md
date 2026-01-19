@@ -1,5 +1,11 @@
 # @repere/core
 
+## 0.2.2
+
+### Patch Changes
+
+- fabd7f1: chore: bump deps
+
 ## 0.2.1
 
 ### Patch Changes
