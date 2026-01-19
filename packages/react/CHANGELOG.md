@@ -1,5 +1,13 @@
 # @repere/react
 
+## 0.3.2
+
+### Patch Changes
+
+- fabd7f1: chore: bump deps
+- Updated dependencies [fabd7f1]
+  - @repere/core@0.2.2
+
 ## 0.3.1
 
 ### Patch Changes
