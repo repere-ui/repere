@@ -1,7 +1,7 @@
 import type { Beacon } from "@repere/core";
 import { getAnimationConfig, mergeAnimationConfigs } from "@repere/core";
 import { useMemo } from "react";
-import type { RepereReactConfig } from "../types";
+import type { RepereReactConfig } from "../../types";
 
 export function useAnimationConfigs(beacon: Beacon, config: RepereReactConfig) {
   const triggerAnimation = useMemo(() => {

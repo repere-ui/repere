@@ -34,7 +34,7 @@ describe("calculateAnchorPointCoords", () => {
     it("should calculate TopCenter anchor point", () => {
       const result = calculateAnchorPointCoords(
         mockRect,
-        AnchorPoint.TopCenter
+        AnchorPoint.TopCenter,
       );
       expect(result).toEqual({
         top: 100,
@@ -55,7 +55,7 @@ describe("calculateAnchorPointCoords", () => {
     it("should calculate RightCenter anchor point", () => {
       const result = calculateAnchorPointCoords(
         mockRect,
-        AnchorPoint.RightCenter
+        AnchorPoint.RightCenter,
       );
       expect(result).toEqual({
         top: 125, // 100 + 50/2
@@ -67,7 +67,7 @@ describe("calculateAnchorPointCoords", () => {
     it("should calculate BottomRight anchor point", () => {
       const result = calculateAnchorPointCoords(
         mockRect,
-        AnchorPoint.BottomRight
+        AnchorPoint.BottomRight,
       );
       expect(result).toEqual({
         top: 150, // rect.bottom
@@ -79,7 +79,7 @@ describe("calculateAnchorPointCoords", () => {
     it("should calculate BottomCenter anchor point", () => {
       const result = calculateAnchorPointCoords(
         mockRect,
-        AnchorPoint.BottomCenter
+        AnchorPoint.BottomCenter,
       );
       expect(result).toEqual({
         top: 150, // rect.bottom
@@ -91,7 +91,7 @@ describe("calculateAnchorPointCoords", () => {
     it("should calculate BottomLeft anchor point", () => {
       const result = calculateAnchorPointCoords(
         mockRect,
-        AnchorPoint.BottomLeft
+        AnchorPoint.BottomLeft,
       );
       expect(result).toEqual({
         top: 150, // rect.bottom
@@ -103,7 +103,7 @@ describe("calculateAnchorPointCoords", () => {
     it("should calculate LeftCenter anchor point", () => {
       const result = calculateAnchorPointCoords(
         mockRect,
-        AnchorPoint.LeftCenter
+        AnchorPoint.LeftCenter,
       );
       expect(result).toEqual({
         top: 125, // 100 + 50/2
@@ -115,7 +115,7 @@ describe("calculateAnchorPointCoords", () => {
     it("should fallback to TopRight for unknown anchor points", () => {
       const result = calculateAnchorPointCoords(
         mockRect,
-        "unknown" as AnchorPoint
+        "unknown" as AnchorPoint,
       );
       expect(result).toEqual({
         top: 100,
@@ -167,7 +167,7 @@ describe("calculateAnchorPointCoords", () => {
       const result = calculateAnchorPointCoords(
         mockRect,
         AnchorPoint.TopLeft,
-        {}
+        {},
       );
       expect(result.left).toBe(200);
       expect(result.top).toBe(100);
@@ -183,7 +183,7 @@ describe("calculateAnchorPointCoords", () => {
         mockRect,
         AnchorPoint.TopLeft,
         undefined,
-        PositioningStrategy.Absolute
+        PositioningStrategy.Absolute,
       );
       expect(result.left).toBe(250); // 200 + 50
       expect(result.top).toBe(200); // 100 + 100
@@ -197,7 +197,7 @@ describe("calculateAnchorPointCoords", () => {
         mockRect,
         AnchorPoint.TopLeft,
         undefined,
-        PositioningStrategy.Fixed
+        PositioningStrategy.Fixed,
       );
       expect(result.left).toBe(200);
       expect(result.top).toBe(100);
@@ -222,7 +222,7 @@ describe("calculateAnchorPointCoords", () => {
         mockRect,
         AnchorPoint.TopLeft,
         { x: 10, y: 20 },
-        PositioningStrategy.Absolute
+        PositioningStrategy.Absolute,
       );
       expect(result.left).toBe(260); // 200 + 50 + 10
       expect(result.top).toBe(220); // 100 + 100 + 20

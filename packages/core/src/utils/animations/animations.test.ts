@@ -153,7 +153,7 @@ describe("getAnimationConfig", () => {
     });
     expect(result).toBeNull();
     expect(warnSpy).toHaveBeenCalledWith(
-      "[Repere] Unknown animation variant: unknown"
+      "[Repere] Unknown animation variant: unknown",
     );
     warnSpy.mockRestore();
   });
@@ -200,7 +200,7 @@ describe("combineTranslateWithAnimation", () => {
     const result = combineTranslateWithAnimation(translate, variants);
 
     expect(result.initial.transform).toBe(
-      "translate(-100%, calc(-50% + 20px))"
+      "translate(-100%, calc(-50% + 20px))",
     );
     expect(result.animate.transform).toBe("translate(-100%, -50%)");
   });
@@ -270,7 +270,7 @@ describe("getPopoverAnimationStyles", () => {
     expect(result["--repere-exit-scale"]).toBe(0.8);
     expect(result["--repere-transition-duration"]).toBe("0.5s");
     expect(result["--repere-transition-timing"]).toBe(
-      "cubic-bezier(0.25, 0.1, 0.25, 1)"
+      "cubic-bezier(0.25, 0.1, 0.25, 1)",
     );
   });
 

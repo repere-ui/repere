@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { ToggleEvent } from "../types";
+import type { ToggleEvent } from "../../types";
 
 export function usePopoverState() {
   const [isOpen, setIsOpen] = useState(false);

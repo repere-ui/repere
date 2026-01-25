@@ -18,7 +18,7 @@ export function calculateAnchorPointCoords(
   rect: DOMRect,
   anchorPoint: AnchorPoint,
   offset?: Offset,
-  strategy: PositioningStrategy = PS.Absolute
+  strategy: PositioningStrategy = PS.Absolute,
 ): BeaconAnchor {
   const offsetX = offset?.x ?? 0;
   const offsetY = offset?.y ?? 0;

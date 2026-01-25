@@ -26,7 +26,7 @@ export class BeaconManager<TComponent = unknown> {
    */
   findMatchingPages(
     pages: Page<TComponent>[],
-    currentPath: string
+    currentPath: string,
   ): Page<TComponent>[] {
     const matches = pages.filter((page) => {
       if (typeof page.path === "function") {
@@ -40,7 +40,7 @@ export class BeaconManager<TComponent = unknown> {
         "[BeaconManager] Path:",
         currentPath,
         "Matched pages:",
-        matches.map((p) => p.id).join(", ") || "none"
+        matches.map((p) => p.id).join(", ") || "none",
       );
     }
 
@@ -53,7 +53,7 @@ export class BeaconManager<TComponent = unknown> {
    */
   async getActiveBeacons(
     pages: Page<TComponent>[],
-    currentPath: string
+    currentPath: string,
   ): Promise<Beacon<TComponent>[]> {
     // Find ALL matching pages (not just the first one)
     const matchingPages = this.findMatchingPages(pages, currentPath);
@@ -70,7 +70,7 @@ export class BeaconManager<TComponent = unknown> {
         "[BeaconManager] Found",
         matchingPages.length,
         "matching page(s):",
-        matchingPages.map((p) => p.id).join(", ")
+        matchingPages.map((p) => p.id).join(", "),
       );
     }
 
@@ -84,7 +84,7 @@ export class BeaconManager<TComponent = unknown> {
         if (seenBeaconIds.has(beacon.id)) {
           if (this.debug) {
             console.warn(
-              `[BeaconManager] Duplicate beacon ID "${beacon.id}" in page "${page.id}", skipping`
+              `[BeaconManager] Duplicate beacon ID "${beacon.id}" in page "${page.id}", skipping`,
             );
           }
           continue;
@@ -100,7 +100,7 @@ export class BeaconManager<TComponent = unknown> {
 
     for (const beacon of allBeacons) {
       const isDismissed = await Promise.resolve(
-        this.store.isDismissed(beacon.id)
+        this.store.isDismissed(beacon.id),
       );
 
       if (!isDismissed) {
