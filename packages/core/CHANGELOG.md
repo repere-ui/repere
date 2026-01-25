@@ -1,5 +1,11 @@
 # @repere/core
 
+## 0.2.3
+
+### Patch Changes
+
+- 97b08db: Cover codebase with tests and do minor refactoring of imports
+
 ## 0.2.2
 
 ### Patch Changes
