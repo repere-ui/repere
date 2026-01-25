@@ -1,4 +1,4 @@
-import type { BeaconState, BeaconStore } from "../types/store";
+import type { BeaconState, BeaconStore } from "../../types/store";
 
 export class MemoryStore implements BeaconStore {
   private state: Map<string, BeaconState> = new Map();

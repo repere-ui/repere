@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Beacon } from "../types/beacon";
-import type { Page } from "../types/config";
-import type { BeaconStore } from "../types/store";
+import type { Beacon } from "../../types/beacon";
+import type { Page } from "../../types/config";
+import type { BeaconStore } from "../../types/store";
 import { BeaconManager } from "./BeaconManager";
 
 const createMockStore = (): BeaconStore => ({
@@ -21,7 +21,7 @@ const createBeacon = (id: string): Beacon => ({
 const createPage = (
   id: string,
   path: string | RegExp | ((pathname: string) => boolean),
-  beacons: Beacon[] = [],
+  beacons: Beacon[] = []
 ): Page => ({
   id,
   path,
@@ -130,7 +130,7 @@ describe("BeaconManager", () => {
       const pages = [createPage("home", "/home", beacons)];
 
       vi.mocked(store.isDismissed).mockImplementation(
-        (id) => id === "beacon-1",
+        (id) => id === "beacon-1"
       );
 
       const result = await manager.getActiveBeacons(pages, "/home");

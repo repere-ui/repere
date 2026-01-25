@@ -1,14 +1,14 @@
-import type { AnchorPoint } from "../types/anchors";
+import type { AnchorPoint } from "../../types/anchors";
 import type {
   CalculatedBeaconAnchorPoint,
   Offset,
   PositioningStrategy,
-} from "../types/beacon";
-import { PositioningStrategy as PS } from "../types/beacon";
-import { calculateAnchorPointCoords } from "./positioning";
+} from "../../types/beacon";
+import { PositioningStrategy as PS } from "../../types/beacon";
+import { calculateAnchorPointCoords } from "../positioning/positioning";
 
 export type AnchorPointCallback = (
-  anchorPoint: CalculatedBeaconAnchorPoint | null,
+  anchorPoint: CalculatedBeaconAnchorPoint | null
 ) => void;
 
 interface CallbackInfo {
@@ -57,7 +57,7 @@ export class AnchorPointTracker {
       zIndex?: number;
       delay?: number;
       positioningStrategy?: PositioningStrategy;
-    } = {},
+    } = {}
   ): () => void {
     const strategy = options.positioningStrategy ?? PS.Absolute;
 
@@ -80,7 +80,7 @@ export class AnchorPointTracker {
       offset?: Offset;
       zIndex?: number;
       delay?: number;
-    },
+    }
   ): () => void {
     const { offset, zIndex = 9999, delay = 0 } = options;
 
@@ -90,7 +90,7 @@ export class AnchorPointTracker {
       if (!element) {
         if (this.debug) {
           console.log(
-            `[AnchorPointTracker:Absolute] Element not found: ${selector}`,
+            `[AnchorPointTracker:Absolute] Element not found: ${selector}`
           );
         }
         callback(null);
@@ -109,7 +109,7 @@ export class AnchorPointTracker {
       if (this.debug) {
         console.log(
           `[AnchorPointTracker:Absolute] Calculated anchor point for ${selector}:`,
-          calculatedAnchorPoint,
+          calculatedAnchorPoint
         );
       }
 
@@ -120,7 +120,7 @@ export class AnchorPointTracker {
     if (delay > 0) {
       if (this.debug) {
         console.log(
-          `[AnchorPointTracker:Absolute] Delaying calculation for ${selector} by ${delay}ms`,
+          `[AnchorPointTracker:Absolute] Delaying calculation for ${selector} by ${delay}ms`
         );
       }
       const timeoutId = setTimeout(calculateAndNotify, delay);
@@ -142,7 +142,7 @@ export class AnchorPointTracker {
       offset?: Offset;
       zIndex?: number;
       delay?: number;
-    },
+    }
   ): () => void {
     const key = selector;
 
@@ -219,7 +219,7 @@ export class AnchorPointTracker {
     if (callbackInfo.needsInitialDelay && tracked.delay && tracked.delay > 0) {
       if (this.debug) {
         console.log(
-          `[AnchorPointTracker:Fixed] Delaying initial anchor point calculation for ${key} by ${tracked.delay}ms`,
+          `[AnchorPointTracker:Fixed] Delaying initial anchor point calculation for ${key} by ${tracked.delay}ms`
         );
       }
 
@@ -227,7 +227,7 @@ export class AnchorPointTracker {
       const timeoutId = setTimeout(() => {
         if (this.debug) {
           console.log(
-            `[AnchorPointTracker:Fixed] Calculating anchor point for ${key} after delay`,
+            `[AnchorPointTracker:Fixed] Calculating anchor point for ${key} after delay`
           );
         }
 
@@ -253,7 +253,7 @@ export class AnchorPointTracker {
 
   private updateAnchorPointForCallback(
     key: string,
-    callback: AnchorPointCallback,
+    callback: AnchorPointCallback
   ) {
     const tracked = this.tracked.get(key);
     if (!tracked) return;
@@ -263,7 +263,7 @@ export class AnchorPointTracker {
     if (!element) {
       if (this.debug) {
         console.log(
-          `[AnchorPointTracker:Fixed] Element not found: ${tracked.selector}`,
+          `[AnchorPointTracker:Fixed] Element not found: ${tracked.selector}`
         );
       }
       tracked.element = null;
@@ -276,7 +276,7 @@ export class AnchorPointTracker {
     const coords = calculateAnchorPointCoords(
       rect,
       tracked.anchorPoint,
-      tracked.offset,
+      tracked.offset
     );
 
     const calculatedAnchorPoint: CalculatedBeaconAnchorPoint = {
@@ -288,7 +288,7 @@ export class AnchorPointTracker {
     if (this.debug) {
       console.log(
         `[AnchorPointTracker:Fixed] Updated anchor point for ${tracked.selector}:`,
-        calculatedAnchorPoint,
+        calculatedAnchorPoint
       );
     }
 
@@ -304,7 +304,7 @@ export class AnchorPointTracker {
     if (!element) {
       if (this.debug) {
         console.log(
-          `[AnchorPointTracker:Fixed] Element not found: ${tracked.selector}`,
+          `[AnchorPointTracker:Fixed] Element not found: ${tracked.selector}`
         );
       }
       tracked.element = null;
@@ -322,7 +322,7 @@ export class AnchorPointTracker {
     const coords = calculateAnchorPointCoords(
       rect,
       tracked.anchorPoint,
-      tracked.offset,
+      tracked.offset
     );
 
     const calculatedAnchorPoint: CalculatedBeaconAnchorPoint = {
@@ -334,7 +334,7 @@ export class AnchorPointTracker {
     if (this.debug) {
       console.log(
         `[AnchorPointTracker:Fixed] Updated anchor point for ${tracked.selector}:`,
-        calculatedAnchorPoint,
+        calculatedAnchorPoint
       );
     }
 

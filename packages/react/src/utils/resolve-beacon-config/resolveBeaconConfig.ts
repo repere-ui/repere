@@ -5,7 +5,7 @@ import type {
   PositioningStrategy,
 } from "@repere/core";
 import { DEFAULT_ANCHOR_POINT } from "@repere/core";
-import type { RepereReactConfig } from "../types";
+import type { RepereReactConfig } from "../../types";
 
 export function resolveBeaconConfig(beacon: Beacon, config: RepereReactConfig) {
   const anchorPoint: AnchorPoint =

@@ -4,7 +4,7 @@ import type {
   CalculatedBeaconAnchorPoint,
 } from "@repere/core";
 import { cloneElement, isValidElement, type ReactElement } from "react";
-import type { ReactComponent } from "../types";
+import type { ReactComponent } from "../../types";
 
 interface TriggerProps {
   beacon: Beacon<unknown>;
@@ -29,7 +29,7 @@ export function renderTriggerComponent(
     anchorPoint: AnchorPoint;
     isOpen: boolean;
     togglePopover: () => void;
-  },
+  }
 ): ReactElement | null {
   if (!component) {
     return null;
@@ -60,7 +60,7 @@ export function renderPopoverComponent(
     hidePopover: () => void;
     handlePopoverRef: (node: HTMLDivElement | null) => void;
     popoverId: string;
-  },
+  }
 ): ReactElement {
   if (isValidElement(component)) {
     return cloneElement(component as ReactElement<PopoverProps>, {

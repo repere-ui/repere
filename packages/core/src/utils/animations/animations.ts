@@ -1,16 +1,16 @@
-import { ANIMATION_VARIANTS } from "../constants/animations";
+import { ANIMATION_VARIANTS } from "../../constants/animations";
 import type {
   Animation,
   AnimationConfig,
   AnimationVariants,
   ResolvedAnimationConfig,
-} from "../types/animations";
+} from "../../types/animations";
 
 /**
  * Normalize animation input to full config
  */
 export function normalizeAnimationConfig(
-  input?: Animation | AnimationConfig | null,
+  input?: Animation | AnimationConfig | null
 ): AnimationConfig | null {
   if (!input) return null;
 
@@ -26,7 +26,7 @@ export function normalizeAnimationConfig(
  */
 export function mergeAnimationConfigs(
   base?: Animation | AnimationConfig,
-  override?: Animation | AnimationConfig,
+  override?: Animation | AnimationConfig
 ): AnimationConfig | null {
   const baseConfig = normalizeAnimationConfig(base);
   const overrideConfig = normalizeAnimationConfig(override);
@@ -47,7 +47,7 @@ export function mergeAnimationConfigs(
  * Get animation config ready for motion library (Framer Motion, etc.)
  */
 export function getAnimationConfig(
-  input?: Animation | AnimationConfig | null,
+  input?: Animation | AnimationConfig | null
 ): ResolvedAnimationConfig | null {
   const config = normalizeAnimationConfig(input);
 
@@ -77,7 +77,7 @@ export function getAnimationConfig(
  */
 export function combineTranslateWithAnimation(
   translate: { x: string; y: string },
-  animationVariants: AnimationVariants,
+  animationVariants: AnimationVariants
 ): AnimationVariants {
   // Parse percentage from translate (e.g., "-50%" -> -50)
   const parsePercent = (val: string) => {
@@ -123,7 +123,7 @@ export function combineTranslateWithAnimation(
  */
 export function getPopoverAnimationStyles(
   openAnimation?: ResolvedAnimationConfig | null,
-  closeAnimation?: ResolvedAnimationConfig | null,
+  closeAnimation?: ResolvedAnimationConfig | null
 ): Record<string, string | number> {
   if (!openAnimation && !closeAnimation) return {};
 
@@ -155,7 +155,9 @@ export function getPopoverAnimationStyles(
     "--repere-exit-y": `${closeVariants?.exit.y ?? 0}px`,
     "--repere-exit-scale": closeVariants?.exit.scale ?? 1,
     // Transition timing
-    "--repere-transition-duration": `${closeTransition?.duration ?? openTransition?.duration ?? 0.3}s`,
+    "--repere-transition-duration": `${
+      closeTransition?.duration ?? openTransition?.duration ?? 0.3
+    }s`,
     "--repere-transition-timing": timingFunction,
   };
 }
@@ -166,7 +168,7 @@ export function getPopoverAnimationStyles(
  */
 export function calculateDismissDuration(
   triggerDismissAnimation?: ResolvedAnimationConfig | null,
-  popoverCloseAnimation?: ResolvedAnimationConfig | null,
+  popoverCloseAnimation?: ResolvedAnimationConfig | null
 ): number {
   const triggerDuration = triggerDismissAnimation?.transition.duration ?? 0;
   const popoverDuration = popoverCloseAnimation?.transition.duration ?? 0;

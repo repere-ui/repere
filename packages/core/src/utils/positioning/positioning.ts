@@ -1,6 +1,6 @@
-import { AnchorPoint } from "../types/anchors";
-import type { Offset, PositioningStrategy } from "../types/beacon";
-import { PositioningStrategy as PS } from "../types/beacon";
+import { AnchorPoint } from "../../types/anchors";
+import type { Offset, PositioningStrategy } from "../../types/beacon";
+import { PositioningStrategy as PS } from "../../types/beacon";
 
 export interface BeaconAnchor {
   top: number;
@@ -18,7 +18,7 @@ export function calculateAnchorPointCoords(
   rect: DOMRect,
   anchorPoint: AnchorPoint,
   offset?: Offset,
-  strategy: PositioningStrategy = PS.Absolute,
+  strategy: PositioningStrategy = PS.Absolute
 ): BeaconAnchor {
   const offsetX = offset?.x ?? 0;
   const offsetY = offset?.y ?? 0;

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { AnchorPoint } from "../types/anchors";
-import { PositioningStrategy } from "../types/beacon";
+import { AnchorPoint } from "../../types/anchors";
+import { PositioningStrategy } from "../../types/beacon";
 import { AnchorPointTracker } from "./AnchorPointTracker";
 
 describe("AnchorPointTracker", () => {
@@ -50,7 +50,7 @@ describe("AnchorPointTracker", () => {
           top: 100,
           left: 300,
           position: "absolute",
-        }),
+        })
       );
     });
 
@@ -76,7 +76,7 @@ describe("AnchorPointTracker", () => {
         expect.objectContaining({
           top: 120,
           left: 210,
-        }),
+        })
       );
     });
 
@@ -91,7 +91,7 @@ describe("AnchorPointTracker", () => {
       expect(callback).toHaveBeenCalledWith(
         expect.objectContaining({
           zIndex: 5000,
-        }),
+        })
       );
     });
 
@@ -123,7 +123,7 @@ describe("AnchorPointTracker", () => {
         {
           delay: 100,
           positioningStrategy: PositioningStrategy.Absolute,
-        },
+        }
       );
 
       unsubscribe();
@@ -145,7 +145,7 @@ describe("AnchorPointTracker", () => {
       expect(callback).toHaveBeenCalledWith(
         expect.objectContaining({
           position: "fixed",
-        }),
+        })
       );
     });
 
@@ -160,11 +160,11 @@ describe("AnchorPointTracker", () => {
       expect(addEventListenerSpy).toHaveBeenCalledWith(
         "scroll",
         expect.any(Function),
-        true,
+        true
       );
       expect(addEventListenerSpy).toHaveBeenCalledWith(
         "resize",
-        expect.any(Function),
+        expect.any(Function)
       );
     });
 
@@ -176,7 +176,7 @@ describe("AnchorPointTracker", () => {
         "#test-element",
         AnchorPoint.TopRight,
         callback,
-        { positioningStrategy: PositioningStrategy.Fixed },
+        { positioningStrategy: PositioningStrategy.Fixed }
       );
 
       unsubscribe();
@@ -184,11 +184,11 @@ describe("AnchorPointTracker", () => {
       expect(removeEventListenerSpy).toHaveBeenCalledWith(
         "scroll",
         expect.any(Function),
-        true,
+        true
       );
       expect(removeEventListenerSpy).toHaveBeenCalledWith(
         "resize",
-        expect.any(Function),
+        expect.any(Function)
       );
     });
 
@@ -232,7 +232,7 @@ describe("AnchorPointTracker", () => {
         "#test-element",
         AnchorPoint.TopRight,
         callback1,
-        { positioningStrategy: PositioningStrategy.Fixed },
+        { positioningStrategy: PositioningStrategy.Fixed }
       );
 
       tracker.subscribe("#test-element", AnchorPoint.TopRight, callback2, {
@@ -265,7 +265,7 @@ describe("AnchorPointTracker", () => {
       expect(callback).toHaveBeenCalledWith(
         expect.objectContaining({
           position: "absolute",
-        }),
+        })
       );
     });
   });

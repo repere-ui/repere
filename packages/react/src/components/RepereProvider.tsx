@@ -15,8 +15,8 @@ import type { ReactBeacon, RepereReactConfig } from "../types";
 import {
   renderPopoverComponent,
   renderTriggerComponent,
-} from "../utils/renderRepereComponents";
-import { resolveBeaconConfig } from "../utils/resolveBeaconConfig";
+} from "../utils/render-repere-components/renderRepereComponents";
+import { resolveBeaconConfig } from "../utils/resolve-beacon-config/resolveBeaconConfig";
 
 interface RepereProviderProps {
   beacon: ReactBeacon;
@@ -84,7 +84,7 @@ export function RepereProvider({
 
     const duration = calculateDismissDuration(
       triggerDismissAnimation,
-      popoverCloseAnimation,
+      popoverCloseAnimation
     );
 
     await waitForAnimations(duration);
@@ -122,7 +122,7 @@ export function RepereProvider({
       console.warn(
         `[Repere] ${
           beacon.id
-        } waiting for target element: anchor=${!!calculatedAnchorPoint}, element=${!!targetElement}`,
+        } waiting for target element: anchor=${!!calculatedAnchorPoint}, element=${!!targetElement}`
       );
     }
     return null;
@@ -132,7 +132,7 @@ export function RepereProvider({
     if (debug) {
       console.warn(
         "[Repere] No popover component provided for beacon:",
-        beacon.id,
+        beacon.id
       );
     }
     return null;

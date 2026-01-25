@@ -1,6 +1,6 @@
 export { DEFAULT_ANCHOR_POINT } from "./constants/beacon";
 
-export { MemoryStore } from "./store/memory-store";
+export { MemoryStore } from "./store/memory-store/memory-store";
 export { AnchorPoint } from "./types/anchors";
 export { Animation, type ResolvedAnimationConfig } from "./types/animations";
 export type { BasePopoverProps, BaseTriggerProps } from "./types/base";
@@ -14,7 +14,7 @@ export {
 } from "./types/beacon";
 export type { Page, RepereConfig } from "./types/config";
 export type { BeaconState, BeaconStore } from "./types/store";
-export { AnchorPointTracker } from "./utils/AnchorPointTracker";
+export { AnchorPointTracker } from "./utils/AnchorPointTracker/AnchorPointTracker";
 export {
   calculateDismissDuration,
   combineTranslateWithAnimation,
@@ -22,7 +22,7 @@ export {
   getPopoverAnimationStyles,
   mergeAnimationConfigs,
   waitForAnimations,
-} from "./utils/animations";
-export { BeaconManager } from "./utils/BeaconManager";
+} from "./utils/animations/animations";
+export { BeaconManager } from "./utils/BeaconManager/BeaconManager";
 
 import "./styles.css";
