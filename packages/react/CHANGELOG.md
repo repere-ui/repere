@@ -1,5 +1,14 @@
 # @repere/react
 
+## 0.3.3
+
+### Patch Changes
+
+- 97b08db: Cover codebase with tests and do minor refactoring of imports
+- 628c219: Bump deps
+- Updated dependencies [97b08db]
+  - @repere/core@0.2.3
+
 ## 0.3.2
 
 ### Patch Changes
