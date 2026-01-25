@@ -3,7 +3,7 @@ import type { BeaconStore } from "./store";
 
 export interface Page<TNode = unknown> {
   id: string;
-  path: string | ((pathname: string) => boolean);
+  path: string | RegExp | ((pathname: string) => boolean);
   beacons: Beacon<TNode>[];
 }
 

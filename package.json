@@ -6,7 +6,9 @@
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
     "check": "pnpm -r check",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.12",

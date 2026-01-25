@@ -15,8 +15,63 @@ env:
   CI: true
 
 jobs:
-  version:
-    timeout-minutes: 15
+  check:
+    name: Lint, Typecheck & Test
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Biome checks
+        run: pnpm check
+
+      - name: Run Type checks
+        run: pnpm typecheck
+
+      - name: Run Tests
+        run: pnpm test
+
+  build:
+    name: Build
+    needs: check
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm build
+
+  release:
+    name: Create & Publish Versions
+    needs: build
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code repository
@@ -35,9 +90,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Run Biome checks
-        run: pnpm check
 
       - name: Build packages
         run: pnpm build
